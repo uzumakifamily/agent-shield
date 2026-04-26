@@ -1,0 +1,22 @@
+{
+  "name": "agent-shield-core",
+  "version": "0.2.0",
+  "description": "Agent Shield — trust kernel for AI agents",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test":  "node test/smoke_test.js",
+    "dev":   "node -r dotenv/config server.js",
+    "verify": "node -r dotenv/config scripts/verify-dry-run.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2",
+    "better-sqlite3": "^9.4.3",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.28.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "private": true
+}
