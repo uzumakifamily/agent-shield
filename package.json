@@ -5,15 +5,17 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test":  "node test/smoke_test.js",
-    "dev":   "node -r dotenv/config server.js",
+    "test": "node test/smoke_test.js",
+    "dev": "node -r dotenv/config server.js",
     "verify": "node -r dotenv/config scripts/verify-dry-run.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2",
     "better-sqlite3": "^9.4.3",
     "dotenv": "^16.4.5",
-    "fastify": "^4.28.0"
+    "fastify": "^4.28.0",
+    "google-auth-library": "^10.6.2",
+    "nodemailer": "^8.0.7"
   },
   "engines": {
     "node": ">=18.0.0"
