@@ -495,6 +495,177 @@
       .hero-right { width: 100%; }
       section { padding: 60px 5%; }
     }
+
+    /* ── EVAL FLOW ────────────────────────────────────────── */
+    .flow-wrap { overflow-x: auto; margin-bottom: 52px; padding-bottom: 4px; }
+    .flow-grid {
+      display: grid;
+      grid-template-columns: 1fr 48px 1fr 48px 1fr 48px 1fr;
+      gap: 0; align-items: start; min-width: 680px;
+    }
+    .flow-step { text-align: center; padding: 0 8px; }
+    .flow-icon-wrap {
+      width: 60px; height: 60px; border-radius: 50%;
+      border: 2px solid; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px; font-size: 1.5rem;
+    }
+    .flow-step h3 { font-weight: 700; font-size: .95rem; margin-bottom: 8px; line-height: 1.35; }
+    .flow-step p  { font-size: .82rem; color: var(--muted2); line-height: 1.6; }
+    .flow-arrow {
+      display: flex; align-items: flex-start; justify-content: center;
+      padding-top: 26px; font-size: 1.3rem; color: var(--muted); opacity: .45;
+    }
+
+    /* ── VERDICT TRIO ─────────────────────────────────────── */
+    .verdict-trio { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    @media (max-width: 768px) { .verdict-trio { grid-template-columns: 1fr; } }
+    .verdict-card { border-radius: 16px; padding: 28px; text-align: center; }
+    .v-allow { background: rgba(16,185,129,.06); border: 1px solid rgba(16,185,129,.22); }
+    .v-pause { background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.22); }
+    .v-block { background: rgba(239,68,68,.06);  border: 1px solid rgba(239,68,68,.22); }
+    .v-icon  { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; }
+    .v-allow .v-icon { color: var(--green); }
+    .v-pause .v-icon { color: var(--yellow); }
+    .v-block .v-icon { color: var(--red); }
+    .v-label { font-weight: 800; font-size: 1rem; letter-spacing: .08em; margin-bottom: 8px; }
+    .v-allow .v-label { color: var(--green); }
+    .v-pause .v-label { color: var(--yellow); }
+    .v-block .v-label { color: var(--red); }
+    .v-desc  { font-size: .84rem; color: var(--muted2); line-height: 1.6; }
+
+    /* ── INTEGRATION CARDS ────────────────────────────────── */
+    .integ-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    @media (max-width: 900px) { .integ-grid { grid-template-columns: 1fr; } }
+    .integ-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 32px;
+      display: flex; flex-direction: column;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+    }
+    .integ-card:hover {
+      border-color: var(--teal-bord); transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(1,105,111,.10);
+    }
+    .integ-icon { font-size: 2rem; margin-bottom: 10px; }
+    .integ-badge {
+      display: inline-block; background: var(--teal-glow); border: 1px solid var(--teal-bord);
+      color: var(--teal-b); font-size: .67rem; font-weight: 700; letter-spacing: .07em;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 100px; margin-bottom: 10px;
+    }
+    .integ-card h3 { font-weight: 700; font-size: 1.06rem; margin-bottom: 8px; }
+    .integ-for { font-size: .84rem; color: var(--muted2); line-height: 1.5; margin-bottom: 20px; }
+    .integ-details { list-style: none; margin-bottom: 24px; flex: 1; }
+    .integ-details li {
+      display: flex; flex-wrap: wrap; gap: 4px 8px;
+      font-size: .82rem; padding: 8px 0;
+      border-bottom: 1px solid var(--border); align-items: baseline;
+    }
+    .integ-details li:last-child { border-bottom: none; }
+    .integ-label { color: var(--muted); min-width: 110px; flex-shrink: 0; font-size: .78rem; }
+    .integ-val    { color: var(--muted2); }
+    .integ-mono   { font-family: 'SF Mono','Cascadia Code',monospace; font-size: .76rem; color: var(--teal-b); }
+    .integ-btn {
+      background: transparent; color: var(--teal-b); border: 1px solid var(--teal-bord);
+      padding: 10px 18px; border-radius: 8px; font-size: .875rem; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background .2s; margin-top: auto;
+      text-align: left;
+    }
+    .integ-btn:hover { background: var(--teal-glow); }
+
+    /* ── QUICK TEST ───────────────────────────────────────── */
+    .qt-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 48px; align-items: start; }
+    @media (max-width: 900px) { .qt-grid { grid-template-columns: 1fr; } }
+    .qt-steps { display: flex; flex-direction: column; gap: 28px; }
+    .qt-step  { display: flex; gap: 18px; align-items: flex-start; }
+    .qt-num {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      background: var(--teal-glow); border: 1px solid var(--teal-bord);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: .8rem; color: var(--teal-b);
+    }
+    .qt-step h4 { font-weight: 700; font-size: .95rem; margin-bottom: 5px; }
+    .qt-step p  { font-size: .84rem; color: var(--muted2); line-height: 1.6; }
+    .qt-step code {
+      background: rgba(255,255,255,.07); color: var(--teal-b);
+      padding: 1px 6px; border-radius: 4px;
+      font-family: 'SF Mono',monospace; font-size: .8em;
+    }
+    .qt-code-wrap {
+      background: #0d1117; border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px; overflow: hidden;
+    }
+    .qt-code-hd {
+      background: #161b22; padding: 10px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      font-size: .73rem; color: var(--muted);
+      font-family: 'SF Mono',monospace;
+    }
+    .qt-code {
+      padding: 20px;
+      font-family: 'SF Mono','Cascadia Code','Consolas',monospace;
+      font-size: .76rem; line-height: 1.75; color: #e6edf3;
+      overflow-x: auto; white-space: pre; margin: 0;
+    }
+    .qt-response { border-top: 1px solid rgba(255,255,255,.07); }
+    .qt-resp-label {
+      padding: 8px 16px; font-size: .71rem; color: var(--muted);
+      background: #161b22; border-bottom: 1px solid rgba(255,255,255,.07);
+      font-family: 'SF Mono',monospace;
+    }
+    .qt-resp-code { padding: 14px 20px; color: #56d364; }
+    .copy-btn-code {
+      background: rgba(255,255,255,.06); color: var(--muted);
+      border: 1px solid rgba(255,255,255,.10); border-radius: 6px;
+      padding: 4px 10px; font-size: .73rem; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 5px; font-family: inherit;
+      transition: background .2s, color .2s;
+    }
+    .copy-btn-code svg { width: 12px; height: 12px; }
+    .copy-btn-code:hover { background: rgba(255,255,255,.12); color: var(--text); }
+
+    /* ── CODE EXAMPLES MODAL ──────────────────────────────── */
+    .ex-tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+    .ex-tab {
+      background: transparent; color: var(--muted2); border: 1px solid var(--border);
+      padding: 7px 16px; border-radius: 8px; font-size: .84rem; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .ex-tab:hover  { color: var(--text); border-color: var(--border2); }
+    .ex-tab.active { background: var(--teal-glow); color: var(--teal-b); border-color: var(--teal-bord); }
+    .ex-panel          { display: none; }
+    .ex-panel.active   { display: block; }
+    .ex-desc { font-size: .84rem; color: var(--muted2); line-height: 1.6; margin-bottom: 14px; }
+    .ex-desc code {
+      background: rgba(255,255,255,.07); color: var(--teal-b);
+      padding: 1px 6px; border-radius: 4px;
+      font-family: 'SF Mono',monospace; font-size: .9em;
+    }
+    .ex-block { margin-bottom: 16px; }
+    .ex-code-hd {
+      background: #161b22; padding: 8px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      font-size: .71rem; color: var(--muted);
+      font-family: 'SF Mono',monospace;
+      border-radius: 8px 8px 0 0;
+    }
+    .ex-code {
+      background: #0d1117; border: 1px solid rgba(255,255,255,.10);
+      border-top: none; border-radius: 0 0 8px 8px;
+      padding: 14px 16px;
+      font-family: 'SF Mono','Cascadia Code','Consolas',monospace;
+      font-size: .74rem; line-height: 1.72; color: #e6edf3;
+      overflow-x: auto; white-space: pre; margin: 0;
+    }
+    .ex-note {
+      font-size: .8rem; color: var(--muted); line-height: 1.55;
+      margin-top: 10px; padding: 10px 14px;
+      background: rgba(255,255,255,.03); border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .ex-note code { color: var(--teal-b); font-family: 'SF Mono',monospace; font-size: .9em; }
   </style>
 </head>
 <body>
@@ -503,8 +674,9 @@
 <nav id="top-nav">
   <div class="nav-logo">AgentShield<span>.</span></div>
   <div class="nav-links">
-    <a href="#features">Features</a>
-    <a href="#incidents">Why</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="#integrations">Integrations</a>
+    <a href="#quick-test">Quick test</a>
     <a href="#pricing">Pricing</a>
     <a href="https://github.com" target="_blank">GitHub</a>
     <a href="/dashboard.html">Dashboard</a>
@@ -519,10 +691,9 @@
       <span class="badge-dot"></span>
       Open Source · MIT License · Free Tier
     </div>
-    <h1>The <em>trust layer</em><br>your AI agents need</h1>
+    <h1>Your AI agent acts.<br><em>AgentShield checks.</em></h1>
     <p class="hero-sub">
-      AgentShield wraps any AI agent and intercepts dangerous actions before they cause damage.
-      Risk scoring, kill switch, Telegram alerts — in 3 lines of code.
+      AgentShield sits between your AI agent and the real world. Before any risky action runs — delete a file, blast an email, deploy to prod — it scores the risk, checks your rules, and either <strong style="color:var(--green)">allows</strong> it, <strong style="color:var(--yellow)">pauses</strong> for your approval, or <strong style="color:var(--red)">blocks</strong> it instantly.
     </p>
     <div class="hero-ctas">
       <button class="btn-primary" onclick="openModal()">Start Free — No Card Needed</button>
@@ -603,28 +774,59 @@
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
+<!-- HOW AGENT SHIELD WORKS -->
 <section id="how-it-works" style="background: var(--bg2);">
   <div class="s-head" style="text-align:center;">
-    <p class="s-eyebrow rv">Setup in minutes</p>
-    <h2 class="s-title rv" style="max-width:480px;margin:0 auto 14px;">How it works</h2>
-    <p class="s-sub rv" style="margin:0 auto;">Three steps from zero to a fully protected agent.</p>
+    <p class="s-eyebrow rv">How it works</p>
+    <h2 class="s-title rv" style="max-width:600px;margin:0 auto 14px;">What happens every time your agent takes an action</h2>
+    <p class="s-sub rv" style="margin:0 auto;">AgentShield sits in the middle. Your agent proposes — AgentShield decides. Nothing risky executes without going through the check.</p>
   </div>
-  <div class="hiw-grid rv">
-    <div class="hiw-step">
-      <div class="hiw-num">1</div>
-      <h3>Install & wrap</h3>
-      <p><code style="font-size:.8em;color:var(--teal-b)">npm i agent-shield-core</code>. Wrap your agent function in one line. Risk scoring starts immediately — no config required.</p>
+
+  <!-- 4-step evaluation flow -->
+  <div class="flow-wrap rv">
+    <div class="flow-grid">
+      <div class="flow-step">
+        <div class="flow-icon-wrap" style="background:rgba(99,102,241,.10);border-color:rgba(99,102,241,.3)">🤖</div>
+        <h3>Agent proposes<br>an action</h3>
+        <p>Your AI agent decides to do something — delete a file, send an email, run a shell command, deploy to production.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon-wrap" style="background:var(--teal-glow);border-color:var(--teal-bord)">🛡️</div>
+        <h3>AgentShield<br>evaluates it</h3>
+        <p>Risk is scored 0–1.0 based on action type, data source, and payload. Your policy rules are checked next.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon-wrap" style="background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.28)">⚖️</div>
+        <h3>Verdict is<br>issued</h3>
+        <p>The action is allowed to run, paused for your approval, or blocked automatically — all with full reasoning logged.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon-wrap" style="background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.22)">👁️</div>
+        <h3>You review<br>in dashboard</h3>
+        <p>Paused actions appear here and in Telegram. Approve or deny with one click — from anywhere, including your phone.</p>
+      </div>
     </div>
-    <div class="hiw-step">
-      <div class="hiw-num">2</div>
-      <h3>Set your thresholds</h3>
-      <p>Define what risk level triggers a block, an alert, or a pass-through. Default config works out of the box for most agents.</p>
+  </div>
+
+  <!-- ALLOW / PAUSE / BLOCK plain-English trio -->
+  <div class="verdict-trio rv">
+    <div class="verdict-card v-allow">
+      <div class="v-icon">✓</div>
+      <div class="v-label">ALLOW</div>
+      <div class="v-desc">Low risk. Action runs immediately. Logged to the immutable audit trail. No human needed.</div>
     </div>
-    <div class="hiw-step">
-      <div class="hiw-num">3</div>
-      <h3>Receive alerts, review & approve</h3>
-      <p>High-risk actions fire a Telegram alert. Open the dashboard, review the full context, and click approve or deny.</p>
+    <div class="verdict-card v-pause">
+      <div class="v-icon">⏸</div>
+      <div class="v-label">PAUSE</div>
+      <div class="v-desc">Risk threshold or rule match. Action is held. You get a Telegram alert. Approve or deny from dashboard or phone.</div>
+    </div>
+    <div class="verdict-card v-block">
+      <div class="v-icon">✕</div>
+      <div class="v-label">BLOCK</div>
+      <div class="v-desc">High risk or explicit deny rule. Action is stopped immediately. Agent is notified. Nothing happens until you change the rule.</div>
     </div>
   </div>
 </section>
@@ -666,6 +868,131 @@
       <h3>Audit & Compliance</h3>
       <p>SOC-2 ready audit trail. Export CSV. Every decision, every reviewer, every timestamp — exactly what compliance teams need.</p>
     </div>
+  </div>
+</section>
+
+<!-- INTEGRATION OPTIONS -->
+<section id="integrations" style="background:var(--bg2);">
+  <div class="s-head">
+    <p class="s-eyebrow rv">Integrations</p>
+    <h2 class="s-title rv">Choose your integration method</h2>
+    <p class="s-sub rv">Pick the path that fits your stack. All three talk to the same backend — the dashboard, approvals, and audit log work identically regardless of how you connect.</p>
+  </div>
+  <div class="integ-grid">
+    <div class="integ-card rv">
+      <div class="integ-icon">🔑</div>
+      <div class="integ-badge">Recommended</div>
+      <h3>REST API + API Key</h3>
+      <p class="integ-for"><strong>Best for:</strong> custom agents, Python bots, LangChain, AutoGen, any language or framework</p>
+      <ul class="integ-details">
+        <li><span class="integ-label">Difficulty</span><span class="integ-val">Easy — one curl command to test</span></li>
+        <li><span class="integ-label">Credential</span><span class="integ-val">API key from Settings → Integration</span></li>
+        <li><span class="integ-label">Header</span><span class="integ-val integ-mono">Authorization: Bearer YOUR_KEY</span></li>
+        <li><span class="integ-label">Time to first test</span><span class="integ-val">~2 minutes</span></li>
+      </ul>
+      <button class="integ-btn" onclick="openExamplesModal('curl')">See curl example →</button>
+    </div>
+    <div class="integ-card rv">
+      <div class="integ-icon">⚡</div>
+      <h3>Node.js SDK</h3>
+      <p class="integ-for"><strong>Best for:</strong> JS/TS apps, LangChain JS, Express backends, Next.js API routes</p>
+      <ul class="integ-details">
+        <li><span class="integ-label">Difficulty</span><span class="integ-val">Easy — npm install + 3 lines</span></li>
+        <li><span class="integ-label">Credential</span><span class="integ-val">API key passed in config</span></li>
+        <li><span class="integ-label">Install</span><span class="integ-val integ-mono">npm i agent-shield-core</span></li>
+        <li><span class="integ-label">Time to first test</span><span class="integ-val">~5 minutes</span></li>
+      </ul>
+      <button class="integ-btn" onclick="openExamplesModal('node')">See Node.js example →</button>
+    </div>
+    <div class="integ-card rv">
+      <div class="integ-icon">🔗</div>
+      <h3>Webhooks (no-code)</h3>
+      <p class="integ-for"><strong>Best for:</strong> Zapier, Make, n8n, no-code automations, any tool that can POST JSON</p>
+      <ul class="integ-details">
+        <li><span class="integ-label">Difficulty</span><span class="integ-val">Easy — copy URL, paste in workflow</span></li>
+        <li><span class="integ-label">Credential</span><span class="integ-val">Webhook URL from Settings tab</span></li>
+        <li><span class="integ-label">Method</span><span class="integ-val integ-mono">POST JSON to webhook URL</span></li>
+        <li><span class="integ-label">Time to first test</span><span class="integ-val">~5 minutes</span></li>
+      </ul>
+      <button class="integ-btn" onclick="openExamplesModal('webhook')">See webhook example →</button>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK TEST -->
+<section id="quick-test">
+  <div class="s-head">
+    <p class="s-eyebrow rv">Quick start</p>
+    <h2 class="s-title rv">Test AgentShield in 2 minutes</h2>
+    <p class="s-sub rv">No SDK needed. Just your API key and a curl command — you'll see a real verdict appear in the dashboard.</p>
+  </div>
+  <div class="qt-grid rv">
+    <div class="qt-steps">
+      <div class="qt-step">
+        <div class="qt-num">1</div>
+        <div>
+          <h4>Create a free account</h4>
+          <p>Sign up above. Your workspace and API key are ready in seconds — no card, no setup call required.</p>
+        </div>
+      </div>
+      <div class="qt-step">
+        <div class="qt-num">2</div>
+        <div>
+          <h4>Copy your API key</h4>
+          <p>Open the <strong>Dashboard → Settings → Integration</strong> section. Copy the value next to <code>API Key</code>.</p>
+        </div>
+      </div>
+      <div class="qt-step">
+        <div class="qt-num">3</div>
+        <div>
+          <h4>Send a test action via curl</h4>
+          <p>Paste the command on the right into your terminal. Replace <code>YOUR_API_KEY</code> with your real key.</p>
+        </div>
+      </div>
+      <div class="qt-step">
+        <div class="qt-num">4</div>
+        <div>
+          <h4>Watch it appear in dashboard</h4>
+          <p>Open <strong>Approvals</strong> in the dashboard. The <code>deploy</code> action appears with its risk score. Approve or deny — that's the full loop.</p>
+        </div>
+      </div>
+    </div>
+    <div class="qt-code-wrap">
+      <div class="qt-code-hd">
+        <span>Terminal — test action (deploy → triggers PAUSE)</span>
+        <button class="copy-btn-code" onclick="copyQtCurl(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <pre class="qt-code" id="qt-curl-code">curl -X POST https://zippy-spontaneity-production.up.railway.app/api/actions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action_type": "deploy",
+    "payload": {
+      "target": "production",
+      "service": "my-api"
+    },
+    "context": {
+      "agent": "my-first-agent",
+      "source": "api"
+    }
+  }'</pre>
+      <div class="qt-response">
+        <div class="qt-resp-label">Expected response — action paused for your approval:</div>
+        <pre class="qt-code qt-resp-code">{
+  "verdict": "PAUSE",
+  "risk_score": 1.0,
+  "action_id": "abc123…",
+  "approval_id": "xyz456…",
+  "reason": "Risk score 1.00"
+}</pre>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:44px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <button class="btn-primary" onclick="openModal()">Create free account →</button>
+    <button class="btn-ghost" onclick="openExamplesModal('curl')">
+      <i data-lucide="code-2"></i> View all code examples
+    </button>
   </div>
 </section>
 
@@ -743,6 +1070,158 @@
   </div>
   <div class="foot-copy">© 2026 AgentShield · MIT License</div>
 </footer>
+
+<!-- CODE EXAMPLES MODAL -->
+<div class="modal-ov" id="examples-modal">
+  <div class="modal-box" style="max-width:680px;width:100%;max-height:85vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeExamplesModal()">✕</button>
+    <div class="modal-title">Code Examples</div>
+    <div class="modal-sub">Copy-paste examples for connecting your agent. Replace <code style="font-size:.8em;color:var(--teal-b)">YOUR_API_KEY</code> with the key from Settings → Integration.</div>
+    <div class="ex-tabs">
+      <button class="ex-tab active" onclick="switchExTab('curl',this)">cURL</button>
+      <button class="ex-tab" onclick="switchExTab('node',this)">Node.js</button>
+      <button class="ex-tab" onclick="switchExTab('python',this)">Python</button>
+      <button class="ex-tab" onclick="switchExTab('webhook',this)">Webhook</button>
+    </div>
+
+    <!-- cURL -->
+    <div class="ex-panel active" id="ex-curl">
+      <p class="ex-desc">Works with any language or tool. Put your API key in the <code>Authorization</code> header as <code>Bearer YOUR_API_KEY</code>.</p>
+      <div class="ex-block">
+        <div class="ex-code-hd"><span>file_delete — high risk, triggers PAUSE</span><button class="copy-btn-code" onclick="copyExCode('ex-code-curl1',this)"><i data-lucide="copy"></i> Copy</button></div>
+        <pre class="ex-code" id="ex-code-curl1">curl -X POST https://zippy-spontaneity-production.up.railway.app/api/actions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action_type": "file_delete",
+    "payload": { "path": "/data/users.csv" },
+    "context": { "agent": "my-agent", "source": "api" }
+  }'</pre>
+      </div>
+      <div class="ex-block">
+        <div class="ex-code-hd"><span>send_email — medium risk</span><button class="copy-btn-code" onclick="copyExCode('ex-code-curl2',this)"><i data-lucide="copy"></i> Copy</button></div>
+        <pre class="ex-code" id="ex-code-curl2">curl -X POST https://zippy-spontaneity-production.up.railway.app/api/actions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action_type": "send_email",
+    "payload": { "to": "user@example.com", "subject": "Hello", "body": "..." },
+    "context": { "agent": "email-bot", "source": "api" }
+  }'</pre>
+      </div>
+      <div class="ex-block">
+        <div class="ex-code-hd"><span>fetch_url — low risk, typically ALLOW</span><button class="copy-btn-code" onclick="copyExCode('ex-code-curl3',this)"><i data-lucide="copy"></i> Copy</button></div>
+        <pre class="ex-code" id="ex-code-curl3">curl -X POST https://zippy-spontaneity-production.up.railway.app/api/actions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action_type": "fetch_url",
+    "payload": { "url": "https://api.example.com/data" },
+    "context": { "agent": "data-fetcher", "source": "api" }
+  }'</pre>
+      </div>
+    </div>
+
+    <!-- Node.js -->
+    <div class="ex-panel" id="ex-node">
+      <p class="ex-desc">Node.js SDK wraps the REST API. Call <code>shield.run()</code> before any agent action — it handles blocking, pausing, and logging automatically.</p>
+      <div class="ex-block">
+        <div class="ex-code-hd"><span>Install</span><button class="copy-btn-code" onclick="copyExCode('ex-code-node1',this)"><i data-lucide="copy"></i> Copy</button></div>
+        <pre class="ex-code" id="ex-code-node1">npm install agent-shield-core</pre>
+      </div>
+      <div class="ex-block">
+        <div class="ex-code-hd"><span>Wrap any action — production_deploy example</span><button class="copy-btn-code" onclick="copyExCode('ex-code-node2',this)"><i data-lucide="copy"></i> Copy</button></div>
+        <pre class="ex-code" id="ex-code-node2">const shield = require('agent-shield-core');
+
+// Call this BEFORE your agent executes any action
+const result = await shield.run(
+  {
+    workspaceId: 'YOUR_WORKSPACE_ID',  // from Settings
+    projectId:   'my-project',
+    agent:       'my-agent',
+    actionType:  'production_deploy',
+    source:      'api',
+    payload:     { service: 'api', env: 'prod' }
+  },
+  async () => {
+    // Your real action — only runs if verdict is ALLOW
+    return await deployToProduction();
+  }
+);
+
+// result.verdict is 'ALLOW', 'PAUSE', or 'BLOCK'
+if (!result.proceed) {
+  console.log('Blocked or paused:', result.verdict, result.reason);
+  // result.approval_id is set if PAUSE — poll or wait for webhook
+}</pre>
+      </div>
+    </div>
+
+    <!-- Python -->
+    <div class="ex-panel" id="ex-python">
+      <p class="ex-desc">No Python SDK needed — use the REST API directly with <code>requests</code>. Add this check before any action your agent takes.</p>
+      <div class="ex-block">
+        <div class="ex-code-hd"><span>Helper function + file_delete example</span><button class="copy-btn-code" onclick="copyExCode('ex-code-py1',this)"><i data-lucide="copy"></i> Copy</button></div>
+        <pre class="ex-code" id="ex-code-py1">import requests
+
+SHIELD_API = "https://zippy-spontaneity-production.up.railway.app"
+API_KEY    = "YOUR_API_KEY"
+
+def check_action(action_type, payload, agent="my-agent"):
+    """Call AgentShield before any risky action."""
+    r = requests.post(
+        f"{SHIELD_API}/api/actions",
+        headers={
+            "Authorization": f"Bearer {API_KEY}",
+            "Content-Type":  "application/json"
+        },
+        json={
+            "action_type": action_type,
+            "payload":     payload,
+            "context":     {"agent": agent, "source": "api"}
+        }
+    )
+    return r.json()
+
+# --- Example: check before deleting a file ---
+result = check_action("file_delete", {"path": "/data/users.csv"})
+
+if result["verdict"] == "ALLOW":
+    delete_file("/data/users.csv")        # safe to run
+elif result["verdict"] == "PAUSE":
+    print("Waiting for approval:", result.get("approval_id"))
+elif result["verdict"] == "BLOCK":
+    print("Action blocked:", result["reason"])</pre>
+      </div>
+    </div>
+
+    <!-- Webhook -->
+    <div class="ex-panel" id="ex-webhook">
+      <p class="ex-desc">No code required. Copy your webhook URL from <strong>Settings → Integration</strong>, then POST JSON to it from Zapier, Make, n8n, or any HTTP tool.</p>
+      <div class="ex-block">
+        <div class="ex-code-hd"><span>Your webhook URL (from Settings → Integration)</span></div>
+        <pre class="ex-code">https://zippy-spontaneity-production.up.railway.app/webhooks/YOUR_WORKSPACE_ID</pre>
+      </div>
+      <div class="ex-block">
+        <div class="ex-code-hd"><span>POST body — send_email example</span><button class="copy-btn-code" onclick="copyExCode('ex-code-wh1',this)"><i data-lucide="copy"></i> Copy</button></div>
+        <pre class="ex-code" id="ex-code-wh1">{
+  "action_type": "send_email",
+  "payload": {
+    "to":      "client@example.com",
+    "subject": "Your weekly report is ready",
+    "body":    "Here is the summary..."
+  },
+  "context": {
+    "agent":  "zapier-workflow",
+    "source": "webhook"
+  }
+}</pre>
+      </div>
+      <div class="ex-note">In Zapier / Make / n8n: set method to <strong>POST</strong>, Content-Type to <strong>application/json</strong>, paste the body above. The URL itself authenticates the request — no Authorization header is needed. The verdict (ALLOW / PAUSE / BLOCK) is returned in the response body.</div>
+    </div>
+
+  </div>
+</div>
 
 <!-- SIGNUP MODAL -->
 <div class="modal-ov" id="signup-modal">
@@ -1107,6 +1586,52 @@ const rvObs = new IntersectionObserver(entries => {
   entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('visible'); rvObs.unobserve(en.target); } });
 }, { threshold: .07, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.rv').forEach(el => rvObs.observe(el));
+
+// ── Examples modal ────────────────────────────────────────────
+function openExamplesModal(tab) {
+  document.getElementById('examples-modal').classList.add('open');
+  const tabName = tab || 'curl';
+  const btn = document.querySelector(`.ex-tab[onclick*="'${tabName}'"]`);
+  switchExTab(tabName, btn);
+  lucide.createIcons();
+}
+function closeExamplesModal() {
+  document.getElementById('examples-modal').classList.remove('open');
+}
+document.getElementById('examples-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('examples-modal')) closeExamplesModal();
+});
+
+function switchExTab(name, btn) {
+  document.querySelectorAll('.ex-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ex-panel').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const panel = document.getElementById('ex-' + name);
+  if (panel) { panel.classList.add('active'); }
+  lucide.createIcons();
+}
+
+function copyExCode(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i data-lucide="check"></i> Copied!';
+    lucide.createIcons();
+    setTimeout(() => { btn.innerHTML = orig; lucide.createIcons(); }, 2000);
+  }).catch(() => {});
+}
+
+function copyQtCurl(btn) {
+  const el = document.getElementById('qt-curl-code');
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i data-lucide="check"></i> Copied!';
+    lucide.createIcons();
+    setTimeout(() => { btn.innerHTML = orig; lucide.createIcons(); }, 2000);
+  }).catch(() => {});
+}
 
 // ── Terminal animation ─────────────────────────────────────────
 (function initTerminal() {
