@@ -59,6 +59,28 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 const { sendOtpEmail } = require('./utils/email');
 const { generateOtp, checkRateLimit, validateOtp, getResendStatus } = require('./utils/otp');
 
+// ── Login brute-force rate limiter ─────────────────────────────
+// 10 failed attempts per 15-minute window, keyed by lower-cased email
+const _loginFailMap = new Map();
+const LOGIN_WINDOW_MS   = 15 * 60 * 1000; // 15 min
+const LOGIN_MAX_FAILS   = 10;
+function checkLoginRateLimit(email) {
+  const key = email.toLowerCase();
+  const now = Date.now();
+  const e = _loginFailMap.get(key);
+  if (!e || now > e.resetAt) { _loginFailMap.set(key, { fails: 0, resetAt: now + LOGIN_WINDOW_MS }); return { ok: true }; }
+  if (e.fails >= LOGIN_MAX_FAILS) return { ok: false, retryAfter: Math.ceil((e.resetAt - now) / 1000) };
+  return { ok: true };
+}
+function recordLoginFail(email) {
+  const key = email.toLowerCase();
+  const now = Date.now();
+  const e = _loginFailMap.get(key) || { fails: 0, resetAt: now + LOGIN_WINDOW_MS };
+  e.fails += 1;
+  _loginFailMap.set(key, e);
+}
+function clearLoginFails(email) { _loginFailMap.delete(email.toLowerCase()); }
+
 // Google OAuth helper
 const googleAuth = require('./auth/google');
 
@@ -336,13 +358,20 @@ fastify.post('/api/auth/login', async (request, reply) => {
   const { email, password } = request.body || {};
   if (!email || !password) return reply.code(400).send({ error: 'email and password required' });
 
+  // Brute-force protection — 10 failed attempts per 15 min per email
+  const rl = checkLoginRateLimit(email);
+  if (!rl.ok) {
+    reply.code(429);
+    return { error: `Too many failed attempts. Please try again in ${Math.ceil(rl.retryAfter / 60)} minute(s).`, retryAfterSeconds: rl.retryAfter };
+  }
+
   const db = getDb();
   try {
     const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase());
-    if (!user) return reply.code(401).send({ error: 'Invalid credentials' });
+    if (!user) { recordLoginFail(email); return reply.code(401).send({ error: 'Invalid credentials' }); }
 
     const { hash } = hashPw(password, user.salt);
-    if (hash !== user.hash) return reply.code(401).send({ error: 'Invalid credentials' });
+    if (hash !== user.hash) { recordLoginFail(email); return reply.code(401).send({ error: 'Invalid credentials' }); }
 
     // Check email verification
     if (user.email_verified !== 1) {
@@ -362,6 +391,7 @@ fastify.post('/api/auth/login', async (request, reply) => {
       });
     }
 
+    clearLoginFails(email); // reset brute-force counter on successful login
     const ws    = db.prepare('SELECT name FROM workspaces WHERE id = ?').get(user.workspace);
     const token = makeToken({
       sub: user.id,
