@@ -11,12 +11,22 @@ const crypto = require('crypto');
 const { getDb } = require('./db');
 const fastify = require('fastify')({ logger: true });
 
-const PORT         = process.env.PORT         || 3000;
-const FRONTEND_URL = process.env.FRONTEND_URL || '*';
+const PORT = process.env.PORT || 3000;
+
+// Allowed CORS origins — always includes Railway URL + production domain
+const CORS_ORIGINS = new Set([
+  'https://zippy-spontaneity-production.up.railway.app',
+  'https://www.allkinz.com',
+  'https://allkinz.com',
+  'http://localhost:3000',
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+]);
 
 // ── CORS ──────────────────────────────────────────────────────
 fastify.addHook('onRequest', async (request, reply) => {
-  reply.header('Access-Control-Allow-Origin',  FRONTEND_URL);
+  const origin = request.headers.origin || '';
+  const allow  = CORS_ORIGINS.has(origin) ? origin : '*';
+  reply.header('Access-Control-Allow-Origin',  allow);
   reply.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
   reply.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   if (request.method === 'OPTIONS') {
@@ -376,7 +386,9 @@ fastify.post('/api/auth/login', async (request, reply) => {
 // 5) GOOGLE OAUTH — Start
 fastify.get('/api/auth/google/start', async (request, reply) => {
   try {
-    const url = googleAuth.getAuthUrl();
+    const redirectUri = googleAuth.resolveRedirectUri(request.hostname);
+    fastify.log.info({ hostname: request.hostname, redirectUri }, 'Google OAuth start');
+    const url = googleAuth.getAuthUrl(undefined, redirectUri);
     reply.redirect(url);
   } catch (err) {
     fastify.log.error(err);
@@ -393,7 +405,8 @@ fastify.get('/api/auth/google/callback', async (request, reply) => {
   }
 
   try {
-    const profile = await googleAuth.verifyCode(code);
+    const redirectUri = googleAuth.resolveRedirectUri(request.hostname);
+    const profile = await googleAuth.verifyCode(code, redirectUri);
 
     if (!profile.email_verified) {
       return reply.redirect('/login.html?error=' + encodeURIComponent('Your Google email is not verified'));

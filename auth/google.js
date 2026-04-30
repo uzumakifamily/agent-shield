@@ -14,19 +14,40 @@ const GOOGLE_CLIENT_ID     = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const GOOGLE_REDIRECT_URI  = process.env.GOOGLE_REDIRECT_URI;
 
+// Allowed redirect URIs — must be registered in Google Cloud Console
+const ALLOWED_REDIRECT_URIS = new Set([
+  'https://zippy-spontaneity-production.up.railway.app/api/auth/google/callback',
+  'https://www.allkinz.com/api/auth/google/callback',
+  'https://allkinz.com/api/auth/google/callback',
+  'http://localhost:3000/api/auth/google/callback',
+  GOOGLE_REDIRECT_URI,
+].filter(Boolean));
+
+/**
+ * Pick the best redirect URI for the given request hostname.
+ * Falls back to GOOGLE_REDIRECT_URI env var.
+ */
+function resolveRedirectUri(hostname) {
+  if (!hostname) return GOOGLE_REDIRECT_URI;
+  const candidate = `https://${hostname}/api/auth/google/callback`;
+  return ALLOWED_REDIRECT_URIS.has(candidate) ? candidate : GOOGLE_REDIRECT_URI;
+}
+
 // Reusable client
-function getClient() {
-  if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !GOOGLE_REDIRECT_URI) {
+function getClient(redirectUri) {
+  if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
     throw new Error('Google OAuth credentials not configured');
   }
-  return new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI);
+  const uri = redirectUri || GOOGLE_REDIRECT_URI;
+  if (!uri) throw new Error('Google OAuth redirect URI not configured');
+  return new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, uri);
 }
 
 /**
  * Build the Google OAuth2 authorization URL
  */
-function getAuthUrl(state) {
-  const client = getClient();
+function getAuthUrl(state, redirectUri) {
+  const client = getClient(redirectUri);
   const url = client.generateAuthUrl({
     access_type: 'offline',
     scope:       ['openid', 'email', 'profile'],
@@ -41,8 +62,8 @@ function getAuthUrl(state) {
  * Exchange authorization code for tokens and verify the ID token
  * Returns: { email, email_verified, name, picture, hd }
  */
-async function verifyCode(code) {
-  const client = getClient();
+async function verifyCode(code, redirectUri) {
+  const client = getClient(redirectUri);
   const { tokens } = await client.getToken(code);
 
   if (!tokens.id_token) {
@@ -72,4 +93,5 @@ async function verifyCode(code) {
 module.exports = {
   getAuthUrl,
   verifyCode,
+  resolveRedirectUri,
 };
