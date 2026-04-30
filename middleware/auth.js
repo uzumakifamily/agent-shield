@@ -20,11 +20,7 @@ async function authenticate(request, reply) {
   }
 
   const token   = authHeader.slice(7);
-  // TEMP DEBUG — remove after confirming fix
-  const secret  = process.env.JWT_SECRET || 'FALLBACK';
-  request.log.info({ secretFirst8: secret.substring(0, 8), tokenParts: token.split('.').length, tokenLen: token.length }, 'auth-debug');
   const payload = readToken(token);
-  request.log.info({ payloadReceived: payload !== null }, 'auth-debug-result');
 
   if (!payload) {
     return reply.code(401).send({ error: 'Invalid or expired token' });
