@@ -51,7 +51,7 @@ function validateOtp(inputOtp, storedOtp, expiresAt) {
   }
 
   if (Date.now() > expiresAt) {
-    return { valid: false, reason: 'OTP has expired. Please request a new code.' };
+    return { valid: false, reason: 'This code has expired. Please request a new one.', expired: true };
   }
 
   // Constant-time comparison to prevent timing attacks
@@ -59,7 +59,7 @@ function validateOtp(inputOtp, storedOtp, expiresAt) {
   const storedBuf = Buffer.from(String(storedOtp).padStart(6, '0'));
 
   if (inputBuf.length !== storedBuf.length) {
-    return { valid: false, reason: 'Invalid OTP.' };
+    return { valid: false, reason: 'Invalid code. Please check and try again.' };
   }
 
   let match = 0;
@@ -68,14 +68,35 @@ function validateOtp(inputOtp, storedOtp, expiresAt) {
   }
 
   if (match !== 0) {
-    return { valid: false, reason: 'Invalid OTP. Please try again.' };
+    return { valid: false, reason: 'Invalid code. Please check and try again.' };
   }
 
   return { valid: true };
+}
+
+/**
+ * Check whether the given email can resend without incrementing the counter.
+ * Returns { canResend: boolean, retryAfterSeconds: number }
+ */
+function getResendStatus(email) {
+  const now = Date.now();
+  const key = email.toLowerCase();
+  const entry = otpRateLimits.get(key);
+
+  if (!entry || now > entry.resetAt) {
+    return { canResend: true, retryAfterSeconds: 0 };
+  }
+
+  if (entry.count >= OTP_MAX_PER_WINDOW) {
+    return { canResend: false, retryAfterSeconds: Math.ceil((entry.resetAt - now) / 1000) };
+  }
+
+  return { canResend: true, retryAfterSeconds: 0 };
 }
 
 module.exports = {
   generateOtp,
   checkRateLimit,
   validateOtp,
+  getResendStatus,
 };

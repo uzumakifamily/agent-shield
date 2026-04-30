@@ -798,9 +798,12 @@
       <div class="form-error" id="otp-error"></div>
       <button class="btn-submit" id="otp-verify-btn" onclick="submitOtp()">Verify →</button>
       <div class="otp-resend">
-        Didn't receive it? <a onclick="resendOtp()">Resend code</a>
+        <span id="otp-resend-static">Didn't receive it? </span><a id="otp-resend-btn" onclick="resendOtp()">Resend code</a>
       </div>
       <div class="otp-timer" id="otp-timer"></div>
+      <p style="font-size:.75rem;color:var(--muted);text-align:center;margin-top:8px;line-height:1.5">
+        Code expires in 10 minutes &middot; New code available after 60s
+      </p>
     </div>
   </div>
 </div>
@@ -810,6 +813,8 @@
 const SHIELD_API = window.SHIELD_API_BASE || '';
 let pendingEmail = '';
 let otpTimerInterval = null;
+let resendCooldown = 0;
+let resendIntervalId = null;
 
 // ── Lucide icons ───────────────────────────────────────────────
 lucide.createIcons();
@@ -840,6 +845,8 @@ function resetModal() {
   document.getElementById('otp-error').textContent = '';
   pendingEmail = '';
   if (otpTimerInterval) clearInterval(otpTimerInterval);
+  if (resendIntervalId) clearInterval(resendIntervalId);
+  resendCooldown = 0;
 }
 
 // ── Signup ─────────────────────────────────────────────────────
@@ -876,6 +883,7 @@ async function handleSignup(e) {
       document.getElementById('otp-email-display').textContent = pendingEmail;
       setupOtpInputs();
       startOtpTimer(600); // 10 minutes
+      startResendCooldown(60);
       return;
     }
 
@@ -965,7 +973,41 @@ async function submitOtp() {
   }
 }
 
+function startResendCooldown(seconds) {
+  if (resendIntervalId) clearInterval(resendIntervalId);
+  resendCooldown = seconds;
+  _updateResendBtn();
+  resendIntervalId = setInterval(() => {
+    resendCooldown = Math.max(0, resendCooldown - 1);
+    _updateResendBtn();
+    if (resendCooldown === 0) {
+      clearInterval(resendIntervalId);
+      resendIntervalId = null;
+    }
+  }, 1000);
+}
+
+function _updateResendBtn() {
+  const btn = document.getElementById('otp-resend-btn');
+  const staticTxt = document.getElementById('otp-resend-static');
+  if (!btn) return;
+  if (resendCooldown > 0) {
+    btn.textContent = `Resend in ${resendCooldown}s`;
+    btn.style.opacity = '0.45';
+    btn.style.cursor = 'not-allowed';
+    btn.style.pointerEvents = 'none';
+    if (staticTxt) staticTxt.style.display = 'none';
+  } else {
+    btn.textContent = 'Resend code';
+    btn.style.opacity = '';
+    btn.style.cursor = '';
+    btn.style.pointerEvents = '';
+    if (staticTxt) staticTxt.style.display = '';
+  }
+}
+
 async function resendOtp() {
+  if (resendCooldown > 0) return;
   const err = document.getElementById('otp-error');
   err.textContent = '';
 
@@ -978,13 +1020,17 @@ async function resendOtp() {
     const data = await res.json().catch(() => ({}));
 
     if (res.status === 429) {
+      const retryAfter = data.retryAfterSeconds || 300;
+      startResendCooldown(retryAfter);
       err.textContent = data.error || 'Too many attempts. Please wait.';
       return;
     }
 
+    const retryAfter = data.retryAfterSeconds || 60;
+    startResendCooldown(retryAfter);
     err.style.color = 'var(--green)';
-    err.textContent = 'New code sent!';
-    setTimeout(() => { err.style.color = ''; err.textContent = ''; }, 3000);
+    err.textContent = 'New code sent! Check your inbox.';
+    setTimeout(() => { err.style.color = ''; err.textContent = ''; }, 4000);
     startOtpTimer(600);
   } catch (ex) {
     err.textContent = 'Failed to resend. Please try again.';

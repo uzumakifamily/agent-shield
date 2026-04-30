@@ -46,7 +46,7 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 
 // Email + OTP helpers
 const { sendOtpEmail } = require('./utils/email');
-const { generateOtp, checkRateLimit, validateOtp } = require('./utils/otp');
+const { generateOtp, checkRateLimit, validateOtp, getResendStatus } = require('./utils/otp');
 
 // Google OAuth helper
 const googleAuth = require('./auth/google');
@@ -239,8 +239,10 @@ fastify.post('/api/auth/request-otp', async (request, reply) => {
   // Rate limit check
   const limit = checkRateLimit(normalized);
   if (!limit.ok) {
+    fastify.log.warn({ email: normalized, retryAfter: limit.retryAfter }, 'OTP rate-limited');
     return reply.code(429).send({
-      error: `Too many attempts. Please try again in ${limit.retryAfter}s.`,
+      error: `Too many attempts. Please try again in ${Math.ceil(limit.retryAfter / 60)} minute(s).`,
+      retryAfterSeconds: limit.retryAfter,
     });
   }
 
@@ -250,7 +252,8 @@ fastify.post('/api/auth/request-otp', async (request, reply) => {
 
     // Always return generic success (don't leak whether email exists)
     if (!user || user.email_verified === 1) {
-      return reply.send({ ok: true, message: 'If this email is registered, a new code has been sent.' });
+      fastify.log.info({ email: normalized, action: 'otp_skipped', reason: !user ? 'no_user' : 'already_verified' }, 'OTP request skipped');
+      return reply.send({ ok: true, status: 'otp_sent', retryAfterSeconds: 60, message: 'If this email is registered, a new code has been sent.' });
     }
 
     const otp = generateOtp();
@@ -259,11 +262,12 @@ fastify.post('/api/auth/request-otp', async (request, reply) => {
     db.prepare('UPDATE users SET otp_code=?, otp_expires_at=? WHERE id=?')
       .run(otp, otpExpires, user.id);
 
-    sendOtpEmail(normalized, otp).catch(err => {
-      fastify.log.warn({ err }, 'Failed to resend OTP email');
+    sendOtpEmail(normalized, otp).catch(emailErr => {
+      fastify.log.warn({ err: emailErr }, 'Failed to resend OTP email');
     });
 
-    return reply.send({ ok: true, message: 'If this email is registered, a new code has been sent.' });
+    fastify.log.info({ email: normalized, action: 'otp_sent' }, 'OTP dispatched');
+    return reply.send({ ok: true, status: 'otp_sent', retryAfterSeconds: 60, message: 'If this email is registered, a new code has been sent.' });
   } finally {
     db.close();
   }
@@ -281,9 +285,11 @@ fastify.post('/api/auth/verify-otp', async (request, reply) => {
 
     const check = validateOtp(otp, user.otp_code, user.otp_expires_at);
     if (!check.valid) {
-      return reply.code(400).send({ error: check.reason });
+      fastify.log.warn({ email: email.toLowerCase(), result: check.expired ? 'expired' : 'invalid', reason: check.reason }, 'OTP verification failed');
+      return reply.code(400).send({ error: check.reason, expired: check.expired || false });
     }
 
+    fastify.log.info({ email: email.toLowerCase(), result: 'ok' }, 'OTP verified successfully');
     // Mark verified, clear OTP
     db.prepare('UPDATE users SET email_verified=1, otp_code=NULL, otp_expires_at=NULL WHERE id=?')
       .run(user.id);
