@@ -183,6 +183,9 @@ fastify.post('/api/auth/signup', async (request, reply) => {
   const { email, password, workspace, name } = request.body || {};
   if (!email || !password)    return reply.code(400).send({ error: 'email and password required' });
   if (password.length < 8)   return reply.code(400).send({ error: 'password must be at least 8 characters' });
+  // Basic email format validation — must have exactly one @, non-empty local and domain, and a dot in the domain
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  if (!EMAIL_RE.test(email)) return reply.code(400).send({ error: 'Invalid email address' });
 
   // Block known disposable / throwaway email domains
   const emailDomain = (email.split('@')[1] || '').toLowerCase();
