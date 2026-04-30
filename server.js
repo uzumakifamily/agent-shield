@@ -184,6 +184,12 @@ fastify.post('/api/auth/signup', async (request, reply) => {
   if (!email || !password)    return reply.code(400).send({ error: 'email and password required' });
   if (password.length < 8)   return reply.code(400).send({ error: 'password must be at least 8 characters' });
 
+  // Block known disposable / throwaway email domains
+  const emailDomain = (email.split('@')[1] || '').toLowerCase();
+  if (DISPOSABLE_PATTERNS.some(p => emailDomain.includes(p))) {
+    return reply.code(422).send({ error: 'Disposable email addresses are not allowed' });
+  }
+
   // Tag workspace type — personal emails allowed but tagged as 'solo'
   const wsType   = isCompanyEmail(email) ? 'company' : 'solo';
   const planName = wsType === 'company'  ? 'starter'  : 'solo_starter';
