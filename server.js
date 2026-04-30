@@ -117,6 +117,8 @@ function ensureAuthTables() {
       dry_run             INTEGER NOT NULL DEFAULT 1,
       telegram_bot_token  TEXT,
       telegram_chat_id    TEXT,
+      risk_threshold      REAL    DEFAULT 0.75,
+      api_key             TEXT,
       updated_at          TEXT
     );
   `);
@@ -133,6 +135,13 @@ function ensureAuthTables() {
     db.exec(`ALTER TABLE users ADD COLUMN otp_expires_at INTEGER`);
   if (!wsCols.some(c => c.name === 'workspace_type'))
     db.exec(`ALTER TABLE workspaces ADD COLUMN workspace_type TEXT NOT NULL DEFAULT 'company'`);
+
+  // user_settings column additions
+  const settingCols = db.prepare('PRAGMA table_info(user_settings)').all();
+  if (!settingCols.some(c => c.name === 'risk_threshold'))
+    db.exec('ALTER TABLE user_settings ADD COLUMN risk_threshold REAL DEFAULT 0.75');
+  if (!settingCols.some(c => c.name === 'api_key'))
+    db.exec('ALTER TABLE user_settings ADD COLUMN api_key TEXT');
 
   db.close();
 }

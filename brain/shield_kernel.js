@@ -133,8 +133,8 @@ async function before(ctx) {
       VALUES (?, ?, ?, ?, ?, datetime('now'))
     `).run(approvalId, workspaceId, projectId, actionId, ruleReason || `Risk score ${score.toFixed(2)}`);
 
-    // Notify
-    const tgMsgId = await notifyApproval({ approvalId, actionId, agent, actionType, reason: ruleReason || `Risk score ${score.toFixed(2)}` });
+    // Notify — pass workspaceId so notify.js reads per-workspace Telegram config
+    const tgMsgId = await notifyApproval({ approvalId, actionId, agent, actionType, reason: ruleReason || `Risk score ${score.toFixed(2)}`, workspaceId });
     if (tgMsgId) {
       db().prepare(`UPDATE approval_queue SET tg_msg_id=?, notified_at=datetime('now') WHERE id=?`).run(tgMsgId, approvalId);
     }

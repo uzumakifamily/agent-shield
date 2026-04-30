@@ -46,18 +46,20 @@ module.exports = async function (fastify, opts) {
 
       // Settings from SQLite (table may not exist yet — return safe defaults)
       let settings = { dry_run: true, telegram_bot_token: null, telegram_chat_id: null };
+      let api_key = null;
       try {
         const row = db.prepare(
-          `SELECT dry_run, telegram_bot_token, telegram_chat_id
+          `SELECT dry_run, telegram_bot_token, telegram_chat_id, api_key
              FROM user_settings
             WHERE workspace_id = ?`
         ).get(workspace_id);
         if (row) {
           settings = {
-            dry_run:             row.dry_run !== 0,           // SQLite stores booleans as 0/1
+            dry_run:             row.dry_run !== 0,
             telegram_bot_token:  row.telegram_bot_token  ?? null,
             telegram_chat_id:    row.telegram_chat_id    ?? null,
           };
+          api_key = row.api_key || null;
         }
       } catch {
         // user_settings table doesn't exist yet — harmless, return defaults
@@ -76,6 +78,7 @@ module.exports = async function (fastify, opts) {
         near_limit,
         daily_stats:             dailyStats,
         settings,
+        api_key,
       };
     } finally {
       db.close();

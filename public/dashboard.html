@@ -585,6 +585,7 @@
           <div class="rule-field">
             <div class="add-rule-label">Action type</div>
             <select class="rule-select" id="rule-action">
+              <option value="file_delete">file_delete</option>
               <option value="delete_file">delete_file</option>
               <option value="shell_execute">shell_execute</option>
               <option value="send_email">send_email</option>
@@ -868,11 +869,11 @@ async function loadOverview() {
     const apvData = apvRes.ok  ? await apvRes.json().catch(() => [])    : [];
     const rulData = rulRes.ok  ? await rulRes.json().catch(() => [])    : [];
 
-    const actions  = actData.actions  || actData.data || actData || [];
-    const total    = actData.total    || (Array.isArray(actions) ? actions.length : 0);
-    const blocked  = actData.blocked  || (Array.isArray(actions) ? actions.filter(a => a.status === 'blocked').length : 0);
-    const approvals = Array.isArray(apvData) ? apvData : (apvData.data || apvData.approvals || []);
-    const rules     = Array.isArray(rulData) ? rulData : (rulData.data || rulData.rules || []);
+    const actions  = actData.rows || actData.actions || actData.data || (Array.isArray(actData) ? actData : []);
+    const total    = actData.total    || actions.length;
+    const blocked  = actions.filter(a => a.hook_verdict === 'BLOCK' || a.status === 'denied').length;
+    const approvals = apvData.rows || apvData.approvals || (Array.isArray(apvData) ? apvData : []);
+    const rules     = rulData.rows || rulData.rules || rulData.data || (Array.isArray(rulData) ? rulData : []);
     const activeRules = rules.filter(r => r.enabled !== false).length;
 
     document.getElementById('kpi-total').textContent   = total;
@@ -922,7 +923,7 @@ async function loadActions(page) {
   try {
     const res  = await apiFetch('/api/actions?' + qs);
     const data = res.ok ? await res.json().catch(() => ({})) : {};
-    const rows  = data.actions || data.data || (Array.isArray(data) ? data : []);
+    const rows  = data.rows || data.actions || data.data || (Array.isArray(data) ? data : []);
     const total = data.total || rows.length;
 
     if (!wrap) return;
@@ -977,7 +978,7 @@ async function loadApprovals() {
   try {
     const res  = await apiFetch('/api/approvals');
     const data = res.ok ? await res.json().catch(() => []) : [];
-    const rows  = Array.isArray(data) ? data : (data.data || data.approvals || []);
+    const rows  = data.rows || data.approvals || (Array.isArray(data) ? data : []);
     if (!body) return;
     if (rows.length === 0) {
       body.innerHTML = `<div class="empty-state">
@@ -1051,7 +1052,7 @@ async function loadRules() {
   try {
     const res  = await apiFetch('/api/rules');
     const data = res.ok ? await res.json().catch(() => []) : [];
-    const rows  = Array.isArray(data) ? data : (data.data || data.rules || []);
+    const rows  = Array.isArray(data) ? data : (data.rows || data.rules || data.data || []);
     if (!list) return;
     if (rows.length === 0) {
       list.innerHTML = `<div class="empty-state">

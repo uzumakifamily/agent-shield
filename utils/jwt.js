@@ -41,4 +41,17 @@ function readToken(token) {
   }
 }
 
-module.exports = { makeToken, readToken };
+/**
+ * Create a non-expiring API key for a workspace.
+ * Stored in user_settings.api_key — use this for agent SDK authentication.
+ * Valid for 100 years; same HMAC-SHA256 format as makeToken.
+ */
+function makeApiKey(payload) {
+  const now  = Math.floor(Date.now() / 1000);
+  const full = { ...payload, type: 'api_key', iat: now, exp: now + 100 * 365 * 24 * 3600 };
+  const data = Buffer.from(JSON.stringify(full)).toString('base64url');
+  const sig  = crypto.createHmac('sha256', JWT_SECRET).update(data).digest('base64url');
+  return `${data}.${sig}`;
+}
+
+module.exports = { makeToken, readToken, makeApiKey };

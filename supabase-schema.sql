@@ -1,17 +1,17 @@
 -- =====================================================
 -- Agent Shield — Supabase/Postgres schema
--- Run ONCE in Supabase SQL Editor
+-- Idempotent: safe to run multiple times
 -- Does NOT touch the existing SQLite schema (db/schema.sql)
 -- =====================================================
 
 -- 1. Plans (reference table, seeded below)
 CREATE TABLE IF NOT EXISTS plans (
-  id            TEXT        PRIMARY KEY,   -- 'free' | 'pro' | 'enterprise'
-  name          TEXT        NOT NULL,
-  price_inr     INT         NOT NULL,      -- paise (₹999 = 99900)
+  id            TEXT         PRIMARY KEY,   -- 'free' | 'pro' | 'enterprise'
+  name          TEXT         NOT NULL,
+  price_inr     INT          NOT NULL,      -- paise (₹999 = 99900)
   price_usd     NUMERIC(6,2) NOT NULL,
-  action_limit  INT         NOT NULL,      -- -1 = unlimited
-  audit_days    INT         NOT NULL
+  action_limit  INT          NOT NULL,      -- -1 = unlimited
+  audit_days    INT          NOT NULL
 );
 
 INSERT INTO plans (id, name, price_inr, price_usd, action_limit, audit_days) VALUES
@@ -68,6 +68,12 @@ ALTER TABLE workspaces    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE invoices      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_settings ENABLE ROW LEVEL SECURITY;
+
+-- Drop before recreate so re-runs never error
+DROP POLICY IF EXISTS "owner_only" ON workspaces;
+DROP POLICY IF EXISTS "owner_only" ON subscriptions;
+DROP POLICY IF EXISTS "owner_only" ON invoices;
+DROP POLICY IF EXISTS "owner_only" ON user_settings;
 
 -- Owner sees only their own rows
 CREATE POLICY "owner_only" ON workspaces
