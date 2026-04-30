@@ -8,7 +8,8 @@ require('dotenv').config();
 const path   = require('path');
 const fs     = require('fs');
 const crypto = require('crypto');
-const { getDb } = require('./db');
+const { getDb }              = require('./db');
+const { makeToken, readToken } = require('./utils/jwt');
 const fastify = require('fastify')({ logger: true });
 
 const PORT = process.env.PORT || 3000;
@@ -51,7 +52,7 @@ fastify.register(require('./api/settings'),      { prefix: '/api/settings'  });
 fastify.register(require('./api/approvals_api'), { prefix: '/api/approvals' });
 
 // ── Auth helpers ──────────────────────────────────────────────
-const JWT_SECRET = process.env.JWT_SECRET || 'shield-dev-secret-change-in-prod';
+// makeToken + readToken imported from utils/jwt.js
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
 // Email + OTP helpers
@@ -60,29 +61,6 @@ const { generateOtp, checkRateLimit, validateOtp, getResendStatus } = require('.
 
 // Google OAuth helper
 const googleAuth = require('./auth/google');
-
-function makeToken(payload) {
-  const full = {
-    ...payload,
-    iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + 30 * 24 * 3600,
-  };
-  const data = Buffer.from(JSON.stringify(full)).toString('base64url');
-  const sig  = crypto.createHmac('sha256', JWT_SECRET).update(data).digest('base64url');
-  return `${data}.${sig}`;
-}
-
-function readToken(token) {
-  try {
-    const [data, sig] = (token || '').split('.');
-    if (!data || !sig) return null;
-    const expected = crypto.createHmac('sha256', JWT_SECRET).update(data).digest('base64url');
-    if (sig !== expected) return null;
-    const payload = JSON.parse(Buffer.from(data, 'base64url').toString('utf8'));
-    if (payload.exp && Math.floor(Date.now() / 1000) > payload.exp) return null;
-    return payload;
-  } catch { return null; }
-}
 
 function hashPw(pass, salt) {
   salt = salt || crypto.randomBytes(16).toString('hex');
@@ -133,6 +111,13 @@ function ensureAuthTables() {
       owner_id       TEXT NOT NULL,
       workspace_type TEXT NOT NULL DEFAULT 'company',
       created_at     INTEGER NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS user_settings (
+      workspace_id        TEXT PRIMARY KEY,
+      dry_run             INTEGER NOT NULL DEFAULT 1,
+      telegram_bot_token  TEXT,
+      telegram_chat_id    TEXT,
+      updated_at          TEXT
     );
   `);
 

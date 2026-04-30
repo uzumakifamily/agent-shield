@@ -1,36 +1,42 @@
 'use strict';
 /**
  * api/settings.js
- *   GET  /api/settings — read user_settings from Supabase
- *   POST /api/settings — upsert user_settings; also updates process.env at runtime
+ *   GET  /api/settings — read user_settings from SQLite
+ *   POST /api/settings — upsert user_settings in SQLite; also updates process.env at runtime
+ *
+ * Uses SQLite only — no Supabase dependency.
  */
 
-const authenticate     = require('../middleware/auth');
-const { supabaseAdmin } = require('../services/supabase');
+const authenticate = require('../middleware/auth');
+const { getDb }    = require('../db');
 
 module.exports = async function (fastify, opts) {
   // ── GET /api/settings ────────────────────────────────────────
   fastify.get('/', { preHandler: authenticate }, async (request, reply) => {
     const { workspace_id } = request.user;
+    const db = getDb();
 
-    const { data, error } = await supabaseAdmin
-      .from('user_settings')
-      .select('dry_run, telegram_bot_token, telegram_chat_id, updated_at')
-      .eq('workspace_id', workspace_id)
-      .single();
+    try {
+      let row = null;
+      try {
+        row = db.prepare(
+          `SELECT dry_run, telegram_bot_token, telegram_chat_id, updated_at
+             FROM user_settings
+            WHERE workspace_id = ?`
+        ).get(workspace_id);
+      } catch {
+        // Table doesn't exist yet — return defaults
+      }
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 = row not found
-      request.log.error(error, 'Failed to fetch settings');
-      reply.code(500);
-      return { error: 'Failed to fetch settings' };
+      return {
+        dry_run:            row ? row.dry_run !== 0 : true,
+        telegram_bot_token: row?.telegram_bot_token  ?? null,
+        telegram_chat_id:   row?.telegram_chat_id    ?? null,
+        updated_at:         row?.updated_at          ?? null,
+      };
+    } finally {
+      db.close();
     }
-
-    return {
-      dry_run:             data?.dry_run             ?? true,
-      telegram_bot_token:  data?.telegram_bot_token  ?? null,
-      telegram_chat_id:    data?.telegram_chat_id    ?? null,
-      updated_at:          data?.updated_at          ?? null,
-    };
   });
 
   // ── POST /api/settings ───────────────────────────────────────
@@ -38,30 +44,51 @@ module.exports = async function (fastify, opts) {
     const { workspace_id } = request.user;
     const { dry_run, telegram_bot_token, telegram_chat_id } = request.body || {};
 
-    const payload = {
-      workspace_id,
-      updated_at: new Date().toISOString(),
-    };
+    const db = getDb();
+    try {
+      // Ensure table exists
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS user_settings (
+          workspace_id        TEXT PRIMARY KEY,
+          dry_run             INTEGER NOT NULL DEFAULT 1,
+          telegram_bot_token  TEXT,
+          telegram_chat_id    TEXT,
+          updated_at          TEXT
+        )
+      `);
 
-    if (dry_run          !== undefined) payload.dry_run             = !!dry_run;
-    if (telegram_bot_token !== undefined) payload.telegram_bot_token = telegram_bot_token || null;
-    if (telegram_chat_id   !== undefined) payload.telegram_chat_id   = telegram_chat_id   || null;
+      // Fetch current row (for merge)
+      const current = db.prepare(
+        `SELECT dry_run, telegram_bot_token, telegram_chat_id FROM user_settings WHERE workspace_id = ?`
+      ).get(workspace_id);
 
-    const { error } = await supabaseAdmin
-      .from('user_settings')
-      .upsert(payload, { onConflict: 'workspace_id' });
+      const newDryRun  = dry_run            !== undefined ? (dry_run ? 1 : 0)          : (current?.dry_run ?? 1);
+      const newTgToken = telegram_bot_token !== undefined ? (telegram_bot_token || null) : (current?.telegram_bot_token ?? null);
+      const newTgChat  = telegram_chat_id   !== undefined ? (telegram_chat_id   || null) : (current?.telegram_chat_id   ?? null);
+      const now        = new Date().toISOString();
 
-    if (error) {
-      request.log.error(error, 'Failed to save settings');
+      db.prepare(`
+        INSERT INTO user_settings (workspace_id, dry_run, telegram_bot_token, telegram_chat_id, updated_at)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(workspace_id) DO UPDATE SET
+          dry_run             = excluded.dry_run,
+          telegram_bot_token  = excluded.telegram_bot_token,
+          telegram_chat_id    = excluded.telegram_chat_id,
+          updated_at          = excluded.updated_at
+      `).run(workspace_id, newDryRun, newTgToken, newTgChat, now);
+
+      // Propagate dry_run to the running process so shield.run() picks it up immediately
+      if (dry_run !== undefined) {
+        process.env.SHIELD_DRY_RUN = dry_run ? 'true' : 'false';
+      }
+
+      return { ok: true };
+    } catch (err) {
+      request.log.error(err, 'Failed to save settings');
       reply.code(500);
       return { error: 'Failed to save settings' };
+    } finally {
+      db.close();
     }
-
-    // Propagate dry_run to the running process so shield.run() picks it up immediately
-    if (dry_run !== undefined) {
-      process.env.SHIELD_DRY_RUN = dry_run ? 'true' : 'false';
-    }
-
-    return { ok: true };
   });
 };
