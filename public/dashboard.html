@@ -427,6 +427,28 @@
       .kpi-grid { grid-template-columns: repeat(2,1fr); }
     }
 
+    /* ── SETTING CODE BLOCK ────────────────────────────── */
+    .setting-code-block {
+      background: #0d1117; border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px; padding: 14px 16px;
+      font-family: 'SF Mono','Cascadia Code',monospace;
+      font-size: .75rem; line-height: 1.7; color: #e6edf3;
+      overflow-x: auto; white-space: pre; margin: 0;
+    }
+
+    /* ── SUPPORT BUTTON ─────────────────────────────────── */
+    .support-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.04); color: var(--muted2);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 7px 13px; font-size: .79rem; font-weight: 500;
+      cursor: pointer; font-family: inherit; width: 100%;
+      transition: background .2s, color .2s, border-color .2s;
+      margin-top: 8px; text-decoration: none;
+    }
+    .support-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .support-btn:hover { background: rgba(255,255,255,.08); color: var(--text); border-color: var(--border2); }
+
     /* ── ONBOARDING PANEL ──────────────────────────────── */
     .onboard-panel {
       background: linear-gradient(135deg, rgba(1,105,111,.10) 0%, rgba(1,144,154,.05) 100%);
@@ -636,6 +658,9 @@
       <button class="btn-signout" onclick="doLogout()">
         <i data-lucide="log-out"></i> Sign out
       </button>
+      <a class="support-btn" href="mailto:support@agentshield.dev?subject=AgentShield%20Beta%20Feedback" target="_blank">
+        <i data-lucide="message-circle"></i> Talk to founder / report issue
+      </a>
     </div>
   </aside>
 
@@ -931,6 +956,31 @@
           </div>
           <div class="setting-row">
             <div class="setting-info">
+              <h4>Workspace ID</h4>
+              <p>Use this if your SDK setup, Node.js config, or automation tool needs a workspace identifier. Pass it as <code style="background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;font-family:monospace;font-size:.85em;color:var(--teal-b)">workspaceId</code> in the SDK.</p>
+            </div>
+            <div class="copy-field">
+              <span class="copy-val" id="workspace-id-disp" style="font-family:monospace;font-size:.78rem">Loading…</span>
+              <button class="copy-btn" onclick="copyWorkspaceId()"><i data-lucide="copy"></i> Copy</button>
+            </div>
+          </div>
+          <!-- Webhook inline POST example -->
+          <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:14px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+              <div class="setting-info" style="max-width:420px">
+                <h4>Webhook POST example</h4>
+                <p>Send this JSON body to your webhook URL. No Authorization header needed — the URL itself authenticates. Works with Zapier, Make, n8n, or any HTTP POST tool.</p>
+              </div>
+              <button class="copy-btn" onclick="copyWebhookExample(this)" style="align-self:flex-start;margin-top:4px"><i data-lucide="copy"></i> Copy</button>
+            </div>
+            <pre class="setting-code-block" id="webhook-example-block">{
+  "action_type": "send_email",
+  "payload": { "to": "client@example.com", "subject": "Your report is ready" },
+  "context": { "agent": "my-automation", "source": "webhook" }
+}</pre>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
               <h4>Current plan</h4>
               <p>Upgrade to unlock more agents, actions per day, and team features.</p>
             </div>
@@ -1084,6 +1134,19 @@ elif result["verdict"] == "BLOCK": print("Blocked:", result["reason"])</pre>
 <script>
 'use strict';
 
+// ── Analytics wrapper ──────────────────────────────────────────
+// Drop-in compatible with Plausible, PostHog, GTM, or any window.analytics.
+// Replace the console.log body with your real provider when ready.
+function track(event, props) {
+  try {
+    if (window.plausible)          window.plausible(event, { props: props || {} });
+    else if (window.posthog)       window.posthog.capture(event, props || {});
+    else if (window.analytics)     window.analytics.track(event, props || {});
+    else if (window.gtag)          window.gtag('event', event, props || {});
+    else                           console.debug('[shield:track]', event, props || {});
+  } catch (_) {}
+}
+
 // ── State ──────────────────────────────────────────────────────
 window.APP = {};
 const SHIELD_API = window.SHIELD_API_BASE || 'https://zippy-spontaneity-production.up.railway.app';
@@ -1143,9 +1206,13 @@ function initDashboard() {
   document.getElementById('plan-disp').textContent       = capitalize(u.plan || 'free');
   document.getElementById('welcome-line').textContent    = `Welcome back — ${u.name || u.email || 'your workspace'}`;
 
-  // Webhook URL
+  // Webhook URL + Workspace ID
   const wsId = u.workspace || '';
   document.getElementById('webhook-url-disp').textContent = `${location.origin}/webhooks/${wsId}`;
+  const wsDisp = document.getElementById('workspace-id-disp');
+  if (wsDisp) wsDisp.textContent = wsId || '—';
+
+  track('dashboard_loaded');
 
   // Default audit date range (last 7 days)
   const now  = new Date();
@@ -1325,10 +1392,18 @@ async function loadOverview() {
       badgeEl.style.display = 'none';
     }
 
-    // Hide onboarding panel once the workspace has actions
+    // Hide onboarding panel + fire first-success toast once the workspace has actions
     if (total > 0) {
       const p = document.getElementById('onboard-panel');
       if (p) p.style.display = 'none';
+
+      const wsId = APP.user?.workspace || 'default';
+      const seenKey = `shield_first_action_${wsId}`;
+      if (!localStorage.getItem(seenKey)) {
+        localStorage.setItem(seenKey, '1');
+        showToast('🎉 It worked — your first agent action was received!', 'success');
+        track('first_action_received', { workspace: wsId });
+      }
     }
 
     // Render recent actions
@@ -1471,6 +1546,8 @@ async function decide(approvalId, decision) {
       showToast(d.error || 'Failed', 'error'); return;
     }
     showToast(decision === 'approve' ? 'Action approved ✓' : 'Action denied', decision === 'approve' ? 'success' : 'error');
+    const apvKey = `shield_first_approval_${APP.user?.workspace || 'default'}`;
+    if (!localStorage.getItem(apvKey)) { localStorage.setItem(apvKey, '1'); track('first_approval_handled', { decision }); }
     // Remove card
     const card = document.getElementById('apv-' + approvalId);
     if (card) card.remove();
@@ -1537,6 +1614,8 @@ async function addRule() {
     if (!res.ok) { const d = await res.json().catch(()=>({})); showToast(d.error||'Failed','error'); return; }
     document.getElementById('rule-note').value = '';
     showToast('Rule added ✓', 'success');
+    const ruleKey = `shield_first_rule_${APP.user?.workspace || 'default'}`;
+    if (!localStorage.getItem(ruleKey)) { localStorage.setItem(ruleKey, '1'); track('first_rule_created'); }
     loadRules();
   } catch (e) { showToast(e.message, 'error'); }
 }
@@ -1656,7 +1735,29 @@ function copyWebhook() {
 
 function copyApiKey() {
   const val = document.getElementById('api-key-disp').textContent;
-  navigator.clipboard.writeText(val).then(() => showToast('API key copied ✓', 'success')).catch(() => showToast('Copy failed','error'));
+  navigator.clipboard.writeText(val).then(() => {
+    showToast('API key copied ✓', 'success');
+    track('api_key_copied');
+  }).catch(() => showToast('Copy failed','error'));
+}
+
+function copyWorkspaceId() {
+  const val = document.getElementById('workspace-id-disp').textContent;
+  navigator.clipboard.writeText(val).then(() => {
+    showToast('Workspace ID copied ✓', 'success');
+    track('workspace_id_copied');
+  }).catch(() => showToast('Copy failed','error'));
+}
+
+function copyWebhookExample(btn) {
+  const el = document.getElementById('webhook-example-block');
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i data-lucide="check"></i> Copied!';
+    lucide.createIcons();
+    setTimeout(() => { btn.innerHTML = orig; lucide.createIcons(); }, 2000);
+  }).catch(() => showToast('Copy failed','error'));
 }
 
 // ── SIDE PANEL ─────────────────────────────────────────────────
