@@ -756,7 +756,8 @@ const SHIELD_API = window.SHIELD_API_BASE || 'https://zippy-spontaneity-producti
 let actionsPage  = 1;
 let auditPage    = 1;
 const PAGE_SIZE  = 10;
-let currentActionId = null;
+let currentActionId   = null;
+let currentApprovalId = null;  // approval_queue.id for the side-panel action
 let auditRows    = [];
 
 // ── Auth check (runs immediately) ─────────────────────────────
@@ -1219,16 +1220,18 @@ function copyApiKey() {
 }
 
 // ── SIDE PANEL ─────────────────────────────────────────────────
-function openActionPanel(action) {
+async function openActionPanel(action) {
   if (typeof action === 'string') {
     try { action = JSON.parse(action); } catch { return; }
   }
-  currentActionId = action.id;
+  currentActionId   = action.id;
+  currentApprovalId = null;
+
   document.getElementById('sp-title').textContent = action.action_type || action.type || 'Action';
   const body = document.getElementById('sp-body');
   const riskVal = parseFloat(action.risk_score) || 0;
   body.innerHTML = `
-    <div class="sp-field"><label>Status</label><div class="sp-val">${statusToBadge(action.status)}</div></div>
+    <div class="sp-field"><label>Status</label><div class="sp-val" id="sp-status-val">${statusToBadge(action.status)}</div></div>
     <div class="sp-field"><label>Time</label><div class="sp-val">${fmtTimeFull(action.created_at || action.timestamp)}</div></div>
     <div class="sp-field"><label>Action type</label><div class="sp-val"><code style="color:var(--teal-b)">${esc(action.action_type || action.type || '—')}</code></div></div>
     <div class="sp-field"><label>Source</label><div class="sp-val">${esc(action.source || '—')}</div></div>
@@ -1243,25 +1246,59 @@ function openActionPanel(action) {
     ${action.review_reason ? `<div class="sp-field"><label>Review note</label><div class="sp-val">${esc(action.review_reason)}</div></div>` : ''}
     ${action.reviewed_by   ? `<div class="sp-field"><label>Reviewed by</label><div class="sp-val" style="font-family:monospace;font-size:.85rem">${esc(action.reviewed_by)}</div></div>` : ''}
   `;
-  // Show approve/deny only for pending actions
+
+  // Show approve/deny for paused (awaiting approval) actions
   const actionsEl = document.getElementById('sp-actions');
-  actionsEl.style.display = action.status === 'pending' ? 'flex' : 'none';
+  const isPaused  = action.status === 'paused';
+  actionsEl.style.display = isPaused ? 'flex' : 'none';
+
+  if (isPaused) {
+    // Look up the correct approval_id from the approval queue
+    try {
+      const res  = await apiFetch('/api/approvals');
+      const data = await res.json().catch(() => ({}));
+      const rows = data.rows || data.approvals || (Array.isArray(data) ? data : []);
+      const match = rows.find(r => r.action_id === action.id);
+      currentApprovalId = match ? match.id : null;
+    } catch (_) { currentApprovalId = null; }
+
+    if (!currentApprovalId) {
+      // Approval already resolved or not found — hide buttons
+      actionsEl.style.display = 'none';
+    }
+  }
+
   document.getElementById('side-panel').classList.add('open');
   lucide.createIcons();
 }
 
 function closeSidePanel() {
   document.getElementById('side-panel').classList.remove('open');
-  currentActionId = null;
+  currentActionId   = null;
+  currentApprovalId = null;
 }
 
 async function spDecide(decision) {
-  if (!currentActionId) return;
-  await decide(currentActionId, decision);
+  if (!currentApprovalId) {
+    showToast('No pending approval found for this action', 'error');
+    return;
+  }
+  // Disable buttons immediately to prevent double-clicks
+  const actionsEl = document.getElementById('sp-actions');
+  Array.from(actionsEl.querySelectorAll('button')).forEach(b => { b.disabled = true; });
+
+  await decide(currentApprovalId, decision);
+
+  // Update status badge inside the panel before closing
+  const statusEl = document.getElementById('sp-status-val');
+  if (statusEl) statusEl.innerHTML = statusToBadge(decision === 'approve' ? 'allowed' : 'denied');
+
   closeSidePanel();
-  // Refresh actions if on actions tab
+  // Refresh actions list so the row status updates
   const actPanel = document.getElementById('tab-actions');
   if (actPanel && actPanel.classList.contains('active')) loadActions();
+  // Also refresh approvals tab badge/count
+  loadApprovals();
 }
 
 // ── PAGINATION ─────────────────────────────────────────────────
