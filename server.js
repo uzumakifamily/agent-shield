@@ -383,6 +383,40 @@ fastify.post('/api/auth/login', async (request, reply) => {
   }
 });
 
+// 5-b) TEST TOKEN — acceptance-test helper (gated by ACCEPTANCE_TEST_KEY env var)
+//      POST /api/auth/test-token  { "key": "<ACCEPTANCE_TEST_KEY>" }
+//      → Creates (or reuses) a pre-verified test account, returns a valid JWT
+fastify.post('/api/auth/test-token', async (request, reply) => {
+  const testKey = process.env.ACCEPTANCE_TEST_KEY;
+  if (!testKey) return reply.code(404).send({ error: 'Not found' });
+  const { key } = request.body || {};
+  if (!key || key !== testKey) return reply.code(403).send({ error: 'Forbidden' });
+
+  const db = getDb();
+  try {
+    const TEST_EMAIL = 'acceptance-test@shield.internal';
+    let user = db.prepare('SELECT * FROM users WHERE email = ?').get(TEST_EMAIL);
+    if (!user) {
+      const { hash, salt } = hashPw('AcceptanceTest999!');
+      const userId = crypto.randomUUID();
+      const wsId   = crypto.randomUUID();
+      const now    = Date.now();
+      db.prepare(`INSERT INTO workspaces (id,name,owner_id,workspace_type,created_at) VALUES (?,?,?,?,?)`)
+        .run(wsId, 'Acceptance Workspace', userId, 'company', now);
+      db.prepare(`INSERT INTO users (id,email,hash,salt,workspace,plan,created_at,email_verified) VALUES (?,?,?,?,?,?,?,1)`)
+        .run(userId, TEST_EMAIL, hash, salt, wsId, 'starter', now);
+      user = db.prepare('SELECT * FROM users WHERE email = ?').get(TEST_EMAIL);
+    } else if (!user.email_verified) {
+      db.prepare('UPDATE users SET email_verified=1 WHERE id=?').run(user.id);
+    }
+    const ws    = db.prepare('SELECT name FROM workspaces WHERE id = ?').get(user.workspace);
+    const token = makeToken({ sub: user.id, email: user.email, workspace: user.workspace, plan: user.plan, name: ws?.name || 'Acceptance Workspace' });
+    return reply.send({ token, workspace_id: user.workspace, email: user.email });
+  } finally {
+    db.close();
+  }
+});
+
 // 5) GOOGLE OAUTH — Start
 fastify.get('/api/auth/google/start', async (request, reply) => {
   try {
