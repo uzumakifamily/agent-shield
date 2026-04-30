@@ -753,18 +753,18 @@
     <div id="signup-form-panel">
       <div class="modal-title">Create your account</div>
       <div class="modal-sub">Free forever on self-host. Cloud trial — no credit card.</div>
-      <form id="signup-form" onsubmit="handleSignup(event)">
+      <form id="signup-form" onsubmit="handleSignup(event)" novalidate>
         <div class="form-group">
           <label>Workspace name</label>
-          <input type="text" id="s-ws" placeholder="Acme AI · My Company · …" required>
+          <input type="text" id="s-ws" placeholder="Acme AI · My Company · …">
         </div>
         <div class="form-group">
           <label>Business email address</label>
-          <input type="email" id="s-email" placeholder="you@company.com" autocomplete="email" required>
+          <input type="email" id="s-email" placeholder="you@company.com" autocomplete="email">
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" id="s-pw" placeholder="At least 8 characters" minlength="8" required>
+          <input type="password" id="s-pw" placeholder="At least 8 characters">
         </div>
         <div class="form-error" id="s-error"></div>
         <button class="btn-submit" type="submit" id="s-btn">Create account →</button>
@@ -832,6 +832,10 @@ function openModal() {
 }
 function closeModal() {
   document.getElementById('signup-modal').classList.remove('open');
+  // Always fully reset so the modal is clean on next open
+  resetModal();
+  const btn = document.getElementById('s-btn');
+  if (btn) { btn.disabled = false; btn.textContent = 'Create account →'; }
 }
 document.getElementById('signup-modal').addEventListener('click', e => {
   if (e.target === document.getElementById('signup-modal')) closeModal();
@@ -855,12 +859,29 @@ async function handleSignup(e) {
   const btn = document.getElementById('s-btn');
   const err = document.getElementById('s-error');
   err.textContent = '';
-  btn.disabled = true;
-  btn.textContent = 'Creating account…';
-
   const email    = document.getElementById('s-email').value.trim();
   const password = document.getElementById('s-pw').value;
   const workspace= document.getElementById('s-ws').value.trim();
+
+  // ── Client-side validation (inline errors, no browser tooltips) ──
+  if (!workspace) {
+    err.textContent = 'Please enter your workspace name.'; return;
+  }
+  if (!email) {
+    err.textContent = 'Please enter your email address.'; return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    err.textContent = 'That doesn\'t look like a valid email address.'; return;
+  }
+  if (!password) {
+    err.textContent = 'Please choose a password.'; return;
+  }
+  if (password.length < 8) {
+    err.textContent = 'Password must be at least 8 characters.'; return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Creating account…';
 
   try {
     const res  = await fetch(SHIELD_API + '/api/auth/signup', {
