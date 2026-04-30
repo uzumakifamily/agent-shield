@@ -1018,11 +1018,12 @@ async function loadApprovals() {
   }
 }
 
-async function decide(actionId, decision) {
+async function decide(approvalId, decision) {
   try {
-    const res = await apiFetch('/api/emergency-override', {
+    const verb = decision === 'approve' ? 'approve' : 'deny';
+    const res = await apiFetch(`/api/approvals/${approvalId}/${verb}`, {
       method: 'POST',
-      body: JSON.stringify({ action_id: actionId, decision }),
+      body: JSON.stringify({}),
     });
     if (!res.ok) {
       const d = await res.json().catch(() => ({}));

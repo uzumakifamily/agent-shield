@@ -26,30 +26,34 @@ module.exports = async function (fastify, opts) {
     return { rows, total: rows.length };
   });
 
-  // POST /api/approvals/:id/resolve
+  // POST /api/approvals/:id/resolve  { decision: 'approved'|'denied' }
   fastify.post('/:id/resolve', { preHandler: authenticate }, async (request, reply) => {
     const { decision, decided_by } = request.body || {};
     if (!['approved', 'denied'].includes(decision)) {
       reply.code(400);
       return { error: 'decision must be approved or denied' };
     }
+    return _resolve(request.params.id, decision, decided_by || request.user?.email || 'api', reply);
+  });
 
-    const outcome = resolveApproval(
-      request.params.id,
-      decision,
-      decided_by || request.user?.email || 'api'
-    );
+  // POST /api/approvals/:id/approve  — convenience alias
+  fastify.post('/:id/approve', { preHandler: authenticate }, async (request, reply) => {
+    const { decided_by } = request.body || {};
+    return _resolve(request.params.id, 'approved', decided_by || request.user?.email || 'api', reply);
+  });
 
-    if (!outcome.ok) {
-      reply.code(404);
-      return outcome;
-    }
+  // POST /api/approvals/:id/deny  — convenience alias
+  fastify.post('/:id/deny', { preHandler: authenticate }, async (request, reply) => {
+    const { decided_by } = request.body || {};
+    return _resolve(request.params.id, 'denied', decided_by || request.user?.email || 'api', reply);
+  });
 
-    // Set authorized=1 on the action when approved
+  async function _resolve(approvalId, decision, decidedBy, reply) {
+    const outcome = resolveApproval(approvalId, decision, decidedBy);
+    if (!outcome.ok) { reply.code(404); return outcome; }
     if (decision === 'approved' && outcome.action_id) {
       getDb().prepare('UPDATE agent_actions SET authorized=1 WHERE id=?').run(outcome.action_id);
     }
-
     return outcome;
-  });
+  }
 };
