@@ -1031,7 +1031,7 @@ async function decide(approvalId, decision) {
     }
     showToast(decision === 'approve' ? 'Action approved ✓' : 'Action denied', decision === 'approve' ? 'success' : 'error');
     // Remove card
-    const card = document.getElementById('apv-' + actionId);
+    const card = document.getElementById('apv-' + approvalId);
     if (card) card.remove();
     // Re-check empty
     const remaining = document.querySelectorAll('.apv-card');
