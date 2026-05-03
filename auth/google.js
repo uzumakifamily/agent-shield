@@ -16,6 +16,7 @@ const GOOGLE_REDIRECT_URI  = process.env.GOOGLE_REDIRECT_URI;
 
 // Allowed redirect URIs — must be registered in Google Cloud Console
 const ALLOWED_REDIRECT_URIS = new Set([
+  'https://agentshield.dev/api/auth/google/callback',
   'https://zippy-spontaneity-production.up.railway.app/api/auth/google/callback',
   'https://www.allkinz.com/api/auth/google/callback',
   'https://allkinz.com/api/auth/google/callback',
