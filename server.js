@@ -10,6 +10,7 @@ const fs     = require('fs');
 const crypto = require('crypto');
 const { getDb }              = require('./db');
 const { makeToken, readToken } = require('./utils/jwt');
+const shieldKernel           = require('./brain/shield_kernel');
 const fastify = require('fastify')({ logger: true });
 
 const PORT = process.env.PORT || 3000;
@@ -42,6 +43,52 @@ fastify.register(require('./api/approvals'), { prefix: '/approvals' });
 // ── Payment webhooks (no auth) ────────────────────────────────
 fastify.register(require('./api/webhooks/razorpay'), { prefix: '/webhooks/razorpay' });
 fastify.register(require('./api/webhooks/paypal'),   { prefix: '/webhooks/paypal'   });
+
+// ── AgentShield webhook ingestion (no auth — workspaceId acts as identifier) ──
+// Used by Zapier / Make / n8n and any no-code tool.
+// POST /webhooks/:workspaceId  { action_type, payload?, context? }
+// Returns { verdict, risk_score, action_id, reason, proceed, approval_id }
+fastify.post('/webhooks/:workspaceId', async (request, reply) => {
+  const { workspaceId } = request.params;
+  const { action_type, payload, context = {} } = request.body || {};
+
+  if (!action_type) {
+    return reply.code(400).send({ error: 'action_type is required' });
+  }
+
+  // Verify the workspace exists so callers get a meaningful 404 on bad IDs
+  const db = getDb();
+  let wsExists = false;
+  try {
+    wsExists = !!db.prepare('SELECT id FROM workspaces WHERE id = ?').get(workspaceId);
+  } finally {
+    db.close();
+  }
+
+  if (!wsExists) {
+    return reply.code(404).send({ error: 'Workspace not found. Check your webhook URL in AgentShield Settings.' });
+  }
+
+  const ctx = {
+    workspaceId,
+    projectId:  context.project_id  || context.projectId  || 'default',
+    agent:      context.agent        || 'webhook-agent',
+    actionType: action_type,
+    source:     context.source       || 'webhook',
+    payload:    payload              || {},
+  };
+
+  const result = await shieldKernel.before(ctx);
+
+  return reply.send({
+    verdict:     result.verdict,
+    risk_score:  result.risk_score  ?? 0,
+    action_id:   result.action_id,
+    reason:      result.reason,
+    proceed:     result.proceed,
+    approval_id: result.approval_id || null,
+  });
+});
 
 // ── Authenticated API routes ──────────────────────────────────
 fastify.register(require('./api/me'),            { prefix: '/api/me'        });
