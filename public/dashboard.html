@@ -658,7 +658,7 @@
       <button class="btn-signout" onclick="doLogout()">
         <i data-lucide="log-out"></i> Sign out
       </button>
-      <a class="support-btn" href="mailto:support@agentshield.dev?subject=AgentShield%20Beta%20Feedback" target="_blank">
+      <a class="support-btn" href="mailto:manager@allkinz.com?subject=AgentShield%20Beta%20Feedback" target="_blank">
         <i data-lucide="message-circle"></i> Talk to founder / report issue
       </a>
     </div>
@@ -722,7 +722,7 @@
             <div class="onboard-step-body">
               <strong>Send a test action (paste in terminal)</strong>
               <div class="onboard-code-wrap">
-                <pre class="onboard-code" id="ob-curl">curl -X POST https://agentshield.dev/api/actions \
+                <pre class="onboard-code" id="ob-curl">curl -X POST https://agentshield.allkinz.com/api/actions \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"action_type":"deploy","payload":{"target":"prod"},"context":{"agent":"my-agent","source":"api"}}'</pre>
@@ -1029,7 +1029,7 @@
       <p class="dex-desc">Works with any language. Put your API key in the <code>Authorization: Bearer</code> header.</p>
       <div class="dex-block">
         <div class="dex-code-hd"><span>deploy — high risk, triggers PAUSE</span><button class="dex-copy-btn" onclick="dexCopy('dex-code-c1',this)"><i data-lucide="copy"></i> Copy</button></div>
-        <pre class="dex-code" id="dex-code-c1">curl -X POST https://agentshield.dev/api/actions \
+        <pre class="dex-code" id="dex-code-c1">curl -X POST https://agentshield.allkinz.com/api/actions \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1040,7 +1040,7 @@
       </div>
       <div class="dex-block">
         <div class="dex-code-hd"><span>file_delete — high risk</span><button class="dex-copy-btn" onclick="dexCopy('dex-code-c2',this)"><i data-lucide="copy"></i> Copy</button></div>
-        <pre class="dex-code" id="dex-code-c2">curl -X POST https://agentshield.dev/api/actions \
+        <pre class="dex-code" id="dex-code-c2">curl -X POST https://agentshield.allkinz.com/api/actions \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1051,7 +1051,7 @@
       </div>
       <div class="dex-block">
         <div class="dex-code-hd"><span>fetch_url — low risk, typically ALLOW</span><button class="dex-copy-btn" onclick="dexCopy('dex-code-c3',this)"><i data-lucide="copy"></i> Copy</button></div>
-        <pre class="dex-code" id="dex-code-c3">curl -X POST https://agentshield.dev/api/actions \
+        <pre class="dex-code" id="dex-code-c3">curl -X POST https://agentshield.allkinz.com/api/actions \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1096,7 +1096,7 @@ if (!result.proceed) {
         <pre class="dex-code" id="dex-code-p1">import requests
 
 API_KEY = "YOUR_API_KEY"
-BASE    = "https://agentshield.dev"
+BASE    = "https://agentshield.allkinz.com"
 
 def check_action(action_type, payload, agent="my-agent"):
     r = requests.post(f"{BASE}/api/actions",

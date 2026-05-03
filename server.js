@@ -17,6 +17,7 @@ const PORT = process.env.PORT || 3000;
 
 // Allowed CORS origins — always includes Railway URL + production domain
 const CORS_ORIGINS = new Set([
+  'https://agentshield.allkinz.com',
   'https://agentshield.dev',
   'https://zippy-spontaneity-production.up.railway.app',
   'https://www.allkinz.com',

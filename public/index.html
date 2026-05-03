@@ -1019,7 +1019,7 @@
         <span>Terminal — test action (deploy → triggers PAUSE)</span>
         <button class="copy-btn-code" onclick="copyQtCurl(this)"><i data-lucide="copy"></i> Copy</button>
       </div>
-      <pre class="qt-code" id="qt-curl-code">curl -X POST https://agentshield.dev/api/actions \
+      <pre class="qt-code" id="qt-curl-code">curl -X POST https://agentshield.allkinz.com/api/actions \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1148,7 +1148,7 @@
       <p class="ex-desc">Works with any language or tool. Put your API key in the <code>Authorization</code> header as <code>Bearer YOUR_API_KEY</code>.</p>
       <div class="ex-block">
         <div class="ex-code-hd"><span>file_delete — high risk, triggers PAUSE</span><button class="copy-btn-code" onclick="copyExCode('ex-code-curl1',this)"><i data-lucide="copy"></i> Copy</button></div>
-        <pre class="ex-code" id="ex-code-curl1">curl -X POST https://agentshield.dev/api/actions \
+        <pre class="ex-code" id="ex-code-curl1">curl -X POST https://agentshield.allkinz.com/api/actions \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1159,7 +1159,7 @@
       </div>
       <div class="ex-block">
         <div class="ex-code-hd"><span>send_email — medium risk</span><button class="copy-btn-code" onclick="copyExCode('ex-code-curl2',this)"><i data-lucide="copy"></i> Copy</button></div>
-        <pre class="ex-code" id="ex-code-curl2">curl -X POST https://agentshield.dev/api/actions \
+        <pre class="ex-code" id="ex-code-curl2">curl -X POST https://agentshield.allkinz.com/api/actions \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1170,7 +1170,7 @@
       </div>
       <div class="ex-block">
         <div class="ex-code-hd"><span>fetch_url — low risk, typically ALLOW</span><button class="copy-btn-code" onclick="copyExCode('ex-code-curl3',this)"><i data-lucide="copy"></i> Copy</button></div>
-        <pre class="ex-code" id="ex-code-curl3">curl -X POST https://agentshield.dev/api/actions \
+        <pre class="ex-code" id="ex-code-curl3">curl -X POST https://agentshield.allkinz.com/api/actions \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1223,7 +1223,7 @@ if (!result.proceed) {
         <div class="ex-code-hd"><span>Helper function + file_delete example</span><button class="copy-btn-code" onclick="copyExCode('ex-code-py1',this)"><i data-lucide="copy"></i> Copy</button></div>
         <pre class="ex-code" id="ex-code-py1">import requests
 
-SHIELD_API = "https://agentshield.dev"
+SHIELD_API = "https://agentshield.allkinz.com"
 API_KEY    = "YOUR_API_KEY"
 
 def check_action(action_type, payload, agent="my-agent"):
@@ -1259,7 +1259,7 @@ elif result["verdict"] == "BLOCK":
       <p class="ex-desc">No code required. Copy your webhook URL from <strong>Settings → Integration</strong>, then POST JSON to it from Zapier, Make, n8n, or any HTTP tool.</p>
       <div class="ex-block">
         <div class="ex-code-hd"><span>Your webhook URL (from Settings → Integration)</span></div>
-        <pre class="ex-code">https://agentshield.dev/webhooks/YOUR_WORKSPACE_ID</pre>
+        <pre class="ex-code">https://agentshield.allkinz.com/webhooks/YOUR_WORKSPACE_ID</pre>
       </div>
       <div class="ex-block">
         <div class="ex-code-hd"><span>POST body — send_email example</span><button class="copy-btn-code" onclick="copyExCode('ex-code-wh1',this)"><i data-lucide="copy"></i> Copy</button></div>
