@@ -3,5 +3,10 @@ node_modules/
 *.db-shm
 *.db-wal
 .env
+.env.local
 .DS_Store
 npm-debug.log*
+.railway/
+.claude/
+_new_design_extracted/
+*.zip

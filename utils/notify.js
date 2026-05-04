@@ -1,10 +1,12 @@
 'use strict';
 /**
- * utils/notify.js — Telegram approval notifications
+ * utils/notify.js — Optional Telegram approval notifications
  *
- * Per-workspace Telegram config is read from user_settings in SQLite.
- * Falls back to TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID env vars if
- * workspace settings are not configured.
+ * Configure with env vars:
+ *   TELEGRAM_BOT_TOKEN  — your bot token from @BotFather
+ *   TELEGRAM_CHAT_ID    — your chat or group ID
+ *
+ * If either variable is missing, notifications are silently skipped.
  */
 
 const https = require('https');
@@ -27,57 +29,32 @@ function postJSON(url, data) {
 }
 
 /**
- * Get Telegram config for a workspace.
- * Priority: workspace DB settings → process.env
+ * Send a Telegram notification for a pending approval.
+ * Returns the Telegram message_id on success, or null if not configured / on error.
  */
-function getTelegramConfig(workspaceId) {
-  if (workspaceId) {
-    try {
-      const { getDb } = require('../db');
-      const db  = getDb();
-      const row = db.prepare(
-        'SELECT telegram_bot_token, telegram_chat_id FROM user_settings WHERE workspace_id = ?'
-      ).get(workspaceId);
-      db.close();
-      if (row?.telegram_bot_token && row?.telegram_chat_id) {
-        return { token: row.telegram_bot_token, chatId: row.telegram_chat_id };
-      }
-    } catch {
-      // DB not available — fall through to env vars
-    }
-  }
-
+async function notifyApproval({ approvalId, actionId, agent, actionType, reason }) {
   const token  = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (token && chatId) return { token, chatId };
-
-  return null;
-}
-
-/**
- * Send a Telegram notification for a pending approval.
- * Returns the Telegram message_id on success, or null on failure/no-config.
- */
-async function notifyApproval({ approvalId, actionId, agent, actionType, reason, workspaceId }) {
-  const config = getTelegramConfig(workspaceId);
-  if (!config) return null;
+  if (!token || !chatId) return null;
 
   try {
     const res = await postJSON(
-      `https://api.telegram.org/bot${config.token}/sendMessage`,
+      `https://api.telegram.org/bot${token}/sendMessage`,
       {
-        chat_id:    config.chatId,
+        chat_id:    chatId,
         parse_mode: 'HTML',
         text: [
-          '<b>⚠️ Approval Required</b>',
+          '<b>⚠️ AgentShield — Approval Required</b>',
           '',
-          `<b>Agent:</b> ${agent || 'unknown'}`,
+          `<b>Agent:</b>  ${agent || 'unknown'}`,
           `<b>Action:</b> ${actionType}`,
           `<b>Reason:</b> ${reason || 'Risk threshold exceeded'}`,
           '',
           `Approval ID: <code>${approvalId}</code>`,
-          `/approve_${approvalId}`,
-          `/deny_${approvalId}`,
+          '',
+          'To approve:',
+          `<code>POST /api/approvals/${approvalId}/resolve</code>`,
+          '<code>{ "decision": "approved" }</code>',
         ].join('\n'),
       }
     );
@@ -88,4 +65,4 @@ async function notifyApproval({ approvalId, actionId, agent, actionType, reason,
   }
 }
 
-module.exports = { notifyApproval, getTelegramConfig };
+module.exports = { notifyApproval };

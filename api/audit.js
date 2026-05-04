@@ -1,12 +1,13 @@
 'use strict';
 /**
  * api/audit.js
- *   GET /api/audit         — full history (paginated, 100/page max)
- *   GET /api/audit/export  — download as CSV
+ *   GET /api/audit        — full action history (paginated)
+ *   GET /api/audit/export — download as CSV
  */
 
-const authenticate = require('../middleware/auth');
-const { getDb }    = require('../db');
+const { getDb } = require('../db');
+
+const WORKSPACE_ID = process.env.WORKSPACE_ID || 'default';
 
 const CSV_COLS = [
   'id','action_type','status','hook_verdict',
@@ -15,15 +16,15 @@ const CSV_COLS = [
 
 module.exports = async function (fastify, opts) {
   // ── GET /api/audit ──────────────────────────────────────────
-  fastify.get('/', { preHandler: authenticate }, async (request, reply) => {
-    const { workspace_id } = request.user;
+  fastify.get('/', async (request, reply) => {
     const db = getDb();
 
-    const page      = Math.max(1, parseInt(request.query.page  ?? 1));
-    const limit     = Math.min(100, parseInt(request.query.limit ?? 50));
-    const offset    = (page - 1) * limit;
+    const page   = Math.max(1, parseInt(request.query.page  ?? 1));
+    const limit  = Math.min(100, parseInt(request.query.limit ?? 50));
+    const offset = (page - 1) * limit;
+
     const conditions = ['workspace_id = ?'];
-    const params     = [workspace_id];
+    const params     = [WORKSPACE_ID];
 
     const action_type = request.query.action_type || null;
     const status      = request.query.status      || null;
@@ -48,17 +49,17 @@ module.exports = async function (fastify, opts) {
         LIMIT ? OFFSET ?`
     ).all(...params, limit, offset);
 
+    db.close();
     return { rows, total, page, limit };
   });
 
   // ── GET /api/audit/export ────────────────────────────────────
-  fastify.get('/export', { preHandler: authenticate }, async (request, reply) => {
-    const { workspace_id } = request.user;
-    const db = getDb();
+  fastify.get('/export', async (request, reply) => {
+    const db    = getDb();
     const today = new Date().toISOString().slice(0, 10);
 
     const conditions = ['workspace_id = ?'];
-    const params     = [workspace_id];
+    const params     = [WORKSPACE_ID];
 
     const action_type = request.query.action_type || null;
     const status      = request.query.status      || null;
@@ -77,6 +78,7 @@ module.exports = async function (fastify, opts) {
         WHERE ${conditions.join(' AND ')}
         ORDER BY created_at DESC`
     ).all(...params);
+    db.close();
 
     const escapeCSV = v => {
       if (v == null) return '';
@@ -92,7 +94,7 @@ module.exports = async function (fastify, opts) {
 
     reply
       .header('Content-Type', 'text/csv; charset=utf-8')
-      .header('Content-Disposition', `attachment; filename="agent-shield-audit-${today}.csv"`)
+      .header('Content-Disposition', `attachment; filename="agentshield-audit-${today}.csv"`)
       .send(lines.join('\n'));
   });
 };

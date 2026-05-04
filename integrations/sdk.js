@@ -1,9 +1,12 @@
 'use strict';
 /**
- * integrations/sdk.js — Pattern A: SDK Decorator
- * Usage: const result = await shield.run(ctx, () => existingFn());
+ * integrations/sdk.js — Node.js SDK wrapper
+ *
+ * Usage:
+ *   const shield = require('./integrations/sdk');
+ *   const result = await shield.run(ctx, () => myAgentFn());
  */
 
-const { run } = require('../brain/shield_kernel');
+const { run, before, after, getPermittedTools } = require('../core/shield_kernel');
 
-module.exports = { run };
+module.exports = { run, before, after, getPermittedTools };
