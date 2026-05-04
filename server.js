@@ -26,12 +26,21 @@ const fastify      = require('fastify')({ logger: true });
 const PORT = process.env.PORT || 3000;
 
 // ── CORS + Security headers ────────────────────────────────────
+const ALLOWED_ORIGINS = [
+  'https://allkinz.com',
+  'https://agentshield.allkinz.com',
+  'http://localhost:3000',
+  'http://localhost:4500',
+];
+
 fastify.addHook('onRequest', async (request, reply) => {
-  const origin  = request.headers.origin || '';
-  const allowed = process.env.CORS_ORIGIN || '*';
-  reply.header('Access-Control-Allow-Origin',  allowed);
+  const origin = request.headers.origin || '';
+  if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+    reply.header('Access-Control-Allow-Origin', origin || '*');
+  }
   reply.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
   reply.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  reply.header('Access-Control-Allow-Credentials', 'true');
   if (request.method === 'OPTIONS') return reply.code(204).send();
 
   reply.header('X-Content-Type-Options',   'nosniff');
