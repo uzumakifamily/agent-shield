@@ -4,7 +4,7 @@
  * FROZEN until unlock. Scaffold only.
  */
 
-// Future: Developer sets HTTP_PROXY=https://shield.allkinz.com/proxy
+// Future: Developer sets HTTP_PROXY=https://your-shield-instance.com/proxy
 // All outbound HTTP calls route through Shield automatically.
 // Zero code change required.
 
