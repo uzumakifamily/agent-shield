@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service — AgentShield</title>
+  <meta name="description" content="AgentShield terms of service — acceptable use, plan limits, liability, and your rights.">
+  <link rel="canonical" href="https://agentshield.allkinz.com/terms.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6L12 2z' fill='%23ef4444'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ef4444'/%3E%3Cpath d='M50 10L18 26v24c0 22.4 13.6 43.4 32 49 18.4-5.6 32-26.6 32-49V26L50 10z' fill='white'/%3E%3C/svg%3E">
+
+  <!-- Analytics -->
+  <script defer data-domain="agentshield.allkinz.com" src="https://plausible.io/js/script.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0f;
+      --bg2:       #0f0f16;
+      --card:      #111118;
+      --teal:      #ef4444;
+      --teal-b:    #ef4444;
+      --teal-bord: rgba(239,68,68,0.22);
+      --text:      #f1f5f9;
+      --muted:     #64748b;
+      --muted2:    #94a3b8;
+      --border:    rgba(255,255,255,0.07);
+      --border2:   rgba(255,255,255,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%;
+      background: rgba(10,11,13,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; text-decoration: none; color: inherit;
+    }
+    .nav-logo-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .nav-logo-name { font-weight: 700; font-size: .92rem; color: #fff; }
+    .nav-logo-by { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-top: 2px; }
+    .nav-back {
+      font-size: .875rem; color: var(--muted2);
+      display: flex; align-items: center; gap: 6px;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: var(--text); }
+
+    /* CONTENT */
+    .legal-wrap {
+      max-width: 760px; margin: 0 auto;
+      padding: 72px 6% 100px;
+    }
+    .legal-eyebrow {
+      font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--teal-b);
+      margin-bottom: 12px;
+    }
+    .legal-title {
+      font-weight: 800; font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+      letter-spacing: -.025em; line-height: 1.2; margin-bottom: 10px;
+    }
+    .legal-meta {
+      font-size: .82rem; color: var(--muted); margin-bottom: 52px;
+      padding-bottom: 28px; border-bottom: 1px solid var(--border);
+    }
+
+    .legal-section { margin-bottom: 44px; }
+    .legal-section h2 {
+      font-weight: 700; font-size: 1.12rem;
+      margin-bottom: 14px; color: var(--text);
+    }
+    .legal-section p {
+      font-size: .9rem; color: var(--muted2);
+      line-height: 1.8; margin-bottom: 12px;
+    }
+    .legal-section ul {
+      list-style: none; margin: 0 0 14px 0; padding: 0;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .legal-section ul li {
+      font-size: .9rem; color: var(--muted2);
+      line-height: 1.7; padding-left: 18px; position: relative;
+    }
+    .legal-section ul li::before {
+      content: '›'; position: absolute; left: 0;
+      color: var(--teal-b); font-weight: 700;
+    }
+    .legal-section a { color: var(--teal-b); }
+    .legal-section a:hover { text-decoration: underline; }
+
+    .legal-callout {
+      background: var(--card); border: 1px solid var(--border);
+      border-left: 3px solid var(--teal-b);
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px; margin: 16px 0;
+      font-size: .88rem; color: var(--muted2); line-height: 1.7;
+    }
+
+    .plan-table {
+      width: 100%; border-collapse: collapse;
+      margin: 16px 0 14px; font-size: .88rem;
+    }
+    .plan-table th {
+      text-align: left; padding: 10px 14px;
+      background: var(--card); color: var(--text);
+      border: 1px solid var(--border); font-weight: 600;
+    }
+    .plan-table td {
+      padding: 9px 14px; color: var(--muted2);
+      border: 1px solid var(--border);
+    }
+    .plan-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 6%;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .foot-logo { display: flex; align-items: center; gap: 10px; }
+    .foot-logo-icon {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .foot-logo-name { font-weight: 700; font-size: .85rem; }
+    .foot-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .foot-links a { font-size: .78rem; color: var(--muted); transition: color .2s; }
+    .foot-links a:hover { color: var(--text); }
+    .foot-copy { font-size: .75rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/">
+    <div class="nav-logo-icon">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div>
+      <div class="nav-logo-name">Agent Shield</div>
+      <div class="nav-logo-by">by allkinz</div>
+    </div>
+  </a>
+  <a class="nav-back" href="/">← Back to home</a>
+</nav>
+
+<!-- CONTENT -->
+<div class="legal-wrap">
+  <p class="legal-eyebrow">Legal</p>
+  <h1 class="legal-title">Terms of Service</h1>
+  <p class="legal-meta">Last updated: 4 May 2026 · Applies to agentshield.allkinz.com</p>
+
+  <div class="legal-section">
+    <h2>1. What AgentShield Is</h2>
+    <p>AgentShield is a runtime control layer for AI agents. It lets you define policies, evaluate agent actions in real time (ALLOW / PAUSE / BLOCK), record an audit trail, and receive approval alerts before an agent takes a high-risk action. It is operated by Allkinz (sole trader), reachable at <a href="mailto:legal@agentshield.allkinz.com">legal@agentshield.allkinz.com</a>.</p>
+    <p>By creating an account or using the service in any way, you agree to these Terms. If you are using AgentShield on behalf of a company or organisation, you represent that you have authority to bind that entity to these Terms.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>2. Acceptable Use</h2>
+    <p>You may use AgentShield to monitor and control AI agents that you own or are authorised to operate. You must not:</p>
+    <ul>
+      <li>Send malicious, deceptive, or harmful payloads through the API with the intent of circumventing AgentShield's controls or those of any other system.</li>
+      <li>Attempt to reverse-engineer, bypass, or disable AgentShield's policy engine, risk scoring, or kill-switch mechanisms.</li>
+      <li>Use the service to facilitate illegal activity or actions that violate the terms of any third-party platform your agents interact with.</li>
+      <li>Abuse the free tier by creating multiple accounts to exceed free-tier limits artificially.</li>
+      <li>Resell or sublicense API access without prior written agreement.</li>
+      <li>Send payloads containing personal data of third parties who have not consented to that data being processed by the service.</li>
+    </ul>
+    <p>Violation of these rules may result in immediate suspension or termination of your account without refund.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>3. Free Tier Limits</h2>
+    <p>AgentShield's free (self-hosted) tier is free forever and carries no action limits. The managed cloud free tier is subject to the following limits:</p>
+
+    <table class="plan-table">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Free Tier</th>
+          <th>Paid Tiers</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Agent actions / month</td><td>500</td><td>Per plan (see Pricing)</td></tr>
+        <tr><td>Workspaces</td><td>1</td><td>Unlimited</td></tr>
+        <tr><td>Audit log retention</td><td>7 days</td><td>90 days</td></tr>
+        <tr><td>Telegram alerts</td><td>✓ included</td><td>✓ included</td></tr>
+        <tr><td>API keys</td><td>1</td><td>Unlimited</td></tr>
+      </tbody>
+    </table>
+
+    <div class="legal-callout">
+      When you reach 500 actions in a calendar month on the free tier, new action evaluations will be <strong>paused</strong> (not silently blocked). Your agents will receive a <code style="background:rgba(255,255,255,.07);color:var(--teal-b);padding:1px 5px;border-radius:4px;font-size:.85em">429</code> response indicating the limit has been reached, so they can handle it gracefully. No actions are silently dropped.
+    </div>
+
+    <p>Limits reset on the first day of each calendar month (UTC). We reserve the right to adjust free-tier limits with 30 days' notice by email.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>4. Paid Plans</h2>
+    <p>Paid plans are billed monthly in advance. All prices are in USD.</p>
+    <ul>
+      <li><strong>Billing cycle</strong> — your plan renews automatically on the same date each month. You will receive an invoice by email.</li>
+      <li><strong>Cancellation</strong> — you may cancel at any time from your account settings or by emailing <a href="mailto:legal@agentshield.allkinz.com">legal@agentshield.allkinz.com</a>. Cancellation takes effect at the end of the current billing period. You retain access until then.</li>
+      <li><strong>Refunds</strong> — if you cancel within 7 days of your first payment and have not used more than 10% of your plan's action quota, you are entitled to a full refund. After 7 days, refunds are at our discretion.</li>
+      <li><strong>Upgrades and downgrades</strong> — plan changes take effect on the next billing cycle unless you request an immediate upgrade, in which case you will be charged a pro-rata amount for the remainder of the current period.</li>
+      <li><strong>Price changes</strong> — we will give 30 days' notice by email before changing paid plan prices. Continued use after the notice period constitutes acceptance.</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>5. Accounts and Security</h2>
+    <ul>
+      <li>You are responsible for maintaining the confidentiality of your API keys and login credentials.</li>
+      <li>You must notify us immediately at <a href="mailto:legal@agentshield.allkinz.com">legal@agentshield.allkinz.com</a> if you suspect unauthorised access to your account.</li>
+      <li>One account per person or organisation. Shared credentials across multiple organisations are not permitted on the free tier.</li>
+      <li>We may suspend accounts showing signs of abuse or credential compromise, pending investigation.</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>6. Open-Source Version</h2>
+    <p>The AgentShield source code is available on GitHub under the MIT Licence. The MIT Licence applies to the code itself. These Terms of Service apply only to the managed cloud service at agentshield.allkinz.com — they do not govern your use of the self-hosted open-source version.</p>
+    <div class="legal-callout">
+      If you self-host AgentShield, you are responsible for your own infrastructure, security, and compliance. We provide no SLA or support guarantee for self-hosted instances.
+    </div>
+  </div>
+
+  <div class="legal-section">
+    <h2>7. Availability and SLA</h2>
+    <p>We aim for high availability but do not guarantee any specific uptime SLA on the free tier. Paid plans targeting production use are offered on a best-efforts basis. Planned maintenance will be announced at least 24 hours in advance where possible.</p>
+    <p>We reserve the right to take the service offline for emergency maintenance without prior notice if required to address a security vulnerability or data integrity issue.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>8. No Warranty</h2>
+    <p>AgentShield is provided <strong>"as is"</strong> and <strong>"as available"</strong> without warranties of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.</p>
+    <p>We do not warrant that the service will be uninterrupted, error-free, or that it will prevent all harmful AI agent actions. AgentShield is a control layer and risk-reduction tool — it is not a guarantee of safety. You remain responsible for the behaviour of AI agents you deploy.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>9. Limitation of Liability</h2>
+    <p>To the maximum extent permitted by applicable law, Allkinz and its operators shall not be liable for any indirect, incidental, special, consequential, or punitive damages — including loss of profits, loss of data, business interruption, or reputational harm — arising from your use of AgentShield, even if we have been advised of the possibility of such damages.</p>
+    <p>Our total aggregate liability to you for any claim arising out of or related to these Terms or the service shall not exceed the greater of: (a) the amount you paid us in the 12 months preceding the claim, or (b) £100 GBP.</p>
+    <p>Nothing in these Terms limits liability for fraud, death, or personal injury caused by gross negligence.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>10. Intellectual Property</h2>
+    <p>The AgentShield name, logo, and website design are owned by Allkinz. The underlying source code is MIT-licensed and available on GitHub. You retain all rights to your own data, agent configurations, and audit logs.</p>
+    <p>By using the service, you grant us a limited, non-exclusive licence to process your data solely to operate and improve the service as described in our <a href="/privacy.html">Privacy Policy</a>.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>11. Termination</h2>
+    <p>Either party may terminate the agreement at any time. We may terminate or suspend your access immediately, without notice, if you materially breach these Terms. On termination:</p>
+    <ul>
+      <li>Your access to the managed service will cease.</li>
+      <li>Your data will be retained for 30 days to allow export, then permanently deleted.</li>
+      <li>Any amounts owed remain payable.</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>12. Governing Law</h2>
+    <p>These Terms are governed by the laws of England and Wales. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales, unless mandatory consumer protection laws in your country require otherwise.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>13. Changes to These Terms</h2>
+    <p>We may update these Terms from time to time. If changes are material, we will notify you by email at least 14 days before they take effect. Continued use after the effective date constitutes acceptance. If you do not agree to the new Terms, you may cancel your account before the effective date.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>14. Contact</h2>
+    <p>Legal enquiries: <a href="mailto:legal@agentshield.allkinz.com">legal@agentshield.allkinz.com</a></p>
+    <p>General support: <a href="mailto:manager@allkinz.com">manager@allkinz.com</a></p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">
+    <div class="foot-logo-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div class="foot-logo-name">Agent Shield</div>
+  </div>
+  <div class="foot-links">
+    <a href="/">Home</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="https://github.com/allkinz/agent-shield" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a href="mailto:manager@allkinz.com">Contact</a>
+  </div>
+  <div class="foot-copy">© 2026 AgentShield by allkinz · MIT License</div>
+</footer>
+
+</body>
+</html>

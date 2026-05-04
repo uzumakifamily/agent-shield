@@ -26,7 +26,7 @@ const CORS_ORIGINS = new Set([
   ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
 ]);
 
-// ── CORS ──────────────────────────────────────────────────────
+// ── CORS + Security headers ────────────────────────────────────
 fastify.addHook('onRequest', async (request, reply) => {
   const origin = request.headers.origin || '';
   const allow  = CORS_ORIGINS.has(origin) ? origin : '*';
@@ -35,6 +35,15 @@ fastify.addHook('onRequest', async (request, reply) => {
   reply.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   if (request.method === 'OPTIONS') {
     return reply.code(204).send();
+  }
+  // Security headers — defence-in-depth
+  reply.header('X-Content-Type-Options',   'nosniff');
+  reply.header('X-Frame-Options',          'DENY');
+  reply.header('X-XSS-Protection',         '1; mode=block');
+  reply.header('Referrer-Policy',          'strict-origin-when-cross-origin');
+  reply.header('Permissions-Policy',       'camera=(), microphone=(), geolocation=()');
+  if (origin.startsWith('https://')) {
+    reply.header('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   }
 });
 
@@ -92,6 +101,17 @@ fastify.post('/webhooks/:workspaceId', async (request, reply) => {
   });
 });
 
+// ── API actions rate-limit hook ───────────────────────────────
+// Applied to all /api/actions requests (authenticated POST = SDK entry point)
+fastify.addHook('onRequest', async (request, reply) => {
+  if (!request.url.startsWith('/api/actions')) return;
+  const ip  = request.headers['x-forwarded-for']?.split(',')[0]?.trim() || request.socket.remoteAddress || 'unknown';
+  const rl  = checkIpRateLimit(_actionsMap, ip, ACTIONS_MAX, ACTIONS_WINDOW_MS);
+  if (!rl.ok) {
+    reply.code(429).send({ error: 'Rate limit exceeded. Max 100 action evaluations per hour per IP.', retryAfterSeconds: rl.retryAfter });
+  }
+});
+
 // ── Authenticated API routes ──────────────────────────────────
 fastify.register(require('./api/me'),            { prefix: '/api/me'        });
 fastify.register(require('./api/actions'),       { prefix: '/api/actions'   });
@@ -107,6 +127,26 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 // Email + OTP helpers
 const { sendOtpEmail } = require('./utils/email');
 const { generateOtp, checkRateLimit, validateOtp, getResendStatus } = require('./utils/otp');
+
+// ── IP-based rate limiters ─────────────────────────────────────
+// Signup: 5 attempts per hour per IP (prevents account-creation abuse)
+const _signupMap       = new Map();
+const SIGNUP_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const SIGNUP_MAX       = 5;
+
+function checkIpRateLimit(map, ip, max, windowMs) {
+  const now = Date.now();
+  const e   = map.get(ip);
+  if (!e || now > e.resetAt) { map.set(ip, { count: 1, resetAt: now + windowMs }); return { ok: true }; }
+  if (e.count >= max) return { ok: false, retryAfter: Math.ceil((e.resetAt - now) / 1000) };
+  e.count += 1;
+  return { ok: true };
+}
+
+// Actions: 100 requests per hour per IP (API abuse prevention)
+const _actionsMap       = new Map();
+const ACTIONS_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const ACTIONS_MAX       = 100;
 
 // ── Login brute-force rate limiter ─────────────────────────────
 // 10 failed attempts per 15-minute window, keyed by lower-cased email
@@ -246,11 +286,26 @@ fastify.get('/login.html',        serveFile(path.join(PUBLIC_DIR, 'login.html'),
 fastify.get('/login',             serveFile(path.join(PUBLIC_DIR, 'login.html'),     HTML));
 fastify.get('/dashboard.html',    serveFile(path.join(PUBLIC_DIR, 'dashboard.html'), HTML));
 fastify.get('/dashboard',         serveFile(path.join(PUBLIC_DIR, 'dashboard.html'), HTML));
+fastify.get('/privacy.html',      serveFile(path.join(PUBLIC_DIR, 'privacy.html'),   HTML));
+fastify.get('/privacy',           serveFile(path.join(PUBLIC_DIR, 'privacy.html'),   HTML));
+fastify.get('/terms.html',        serveFile(path.join(PUBLIC_DIR, 'terms.html'),     HTML));
+fastify.get('/terms',             serveFile(path.join(PUBLIC_DIR, 'terms.html'),     HTML));
+fastify.get('/robots.txt',        serveFile(path.join(PUBLIC_DIR, 'robots.txt'),     'text/plain; charset=utf-8'));
+fastify.get('/sitemap.xml',       serveFile(path.join(PUBLIC_DIR, 'sitemap.xml'),    'application/xml; charset=utf-8'));
+fastify.get('/favicon.svg',       serveFile(path.join(PUBLIC_DIR, 'favicon.svg'),    'image/svg+xml'));
 
 // ── Auth routes ────────────────────────────────────────────────
 
 // 1) SIGNUP (with OTP + company email check)
 fastify.post('/api/auth/signup', async (request, reply) => {
+  // IP rate limit: 5 signups per hour per IP
+  const ip = request.headers['x-forwarded-for']?.split(',')[0]?.trim() || request.socket.remoteAddress || 'unknown';
+  const rlIp = checkIpRateLimit(_signupMap, ip, SIGNUP_MAX, SIGNUP_WINDOW_MS);
+  if (!rlIp.ok) {
+    reply.code(429);
+    return { error: `Too many signup attempts. Please try again in ${Math.ceil(rlIp.retryAfter / 60)} minute(s).`, retryAfterSeconds: rlIp.retryAfter };
+  }
+
   const { email, password, workspace, name } = request.body || {};
   if (!email || !password)    return reply.code(400).send({ error: 'email and password required' });
   if (password.length < 8)   return reply.code(400).send({ error: 'password must be at least 8 characters' });
@@ -614,6 +669,17 @@ fastify.post('/api/emergency-override', { preHandler: requireAuth }, async (requ
   } finally {
     db.close();
   }
+});
+
+// ── Global error handler ───────────────────────────────────────
+fastify.setErrorHandler((err, request, reply) => {
+  const statusCode = err.statusCode || err.status || 500;
+  fastify.log.error({ err, url: request.url, method: request.method }, 'Unhandled error');
+  reply.code(statusCode).send({
+    error:   statusCode >= 500 ? 'Internal server error' : (err.message || 'Bad request'),
+    code:    statusCode,
+    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack }),
+  });
 });
 
 // ── Start ─────────────────────────────────────────────────────

@@ -74,6 +74,20 @@ module.exports = async function (fastify, opts) {
       return { error: 'action_type is required' };
     }
 
+    // Input validation
+    if (typeof action_type !== 'string') {
+      reply.code(400); return { error: 'action_type must be a string' };
+    }
+    if (action_type.length > 100) {
+      reply.code(400); return { error: 'action_type must be 100 characters or fewer' };
+    }
+    if (context.agent !== undefined && (typeof context.agent !== 'string' || context.agent.length > 50)) {
+      reply.code(400); return { error: 'context.agent must be a string of 50 characters or fewer' };
+    }
+    if (payload !== undefined && (typeof payload !== 'object' || Array.isArray(payload))) {
+      reply.code(400); return { error: 'payload must be an object' };
+    }
+
     const ctx = {
       workspaceId: workspace_id,
       projectId:   context.project_id || context.projectId || 'default',

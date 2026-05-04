@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — AgentShield</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6L12 2z' fill='%23ef4444'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ef4444'/%3E%3Cpath d='M50 10L18 26v24c0 22.4 13.6 43.4 32 49 18.4-5.6 32-26.6 32-49V26L50 10z' fill='white'/%3E%3C/svg%3E">
+
+  <!-- Analytics -->
+  <script defer data-domain="agentshield.allkinz.com" src="https://plausible.io/js/script.js"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,14 +22,14 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:         #0a0b0d;
-      --sidebar:    #0d0f14;
-      --card:       #111318;
+      --bg:         #0a0a0f;
+      --sidebar:    #0f0f16;
+      --card:       #111118;
       --card2:      #161b24;
-      --teal:       #01696f;
-      --teal-b:     #00909a;
-      --teal-glow:  rgba(1,105,111,0.14);
-      --teal-bord:  rgba(1,105,111,0.3);
+      --teal:       #ef4444;
+      --teal-b:     #ef4444;
+      --teal-glow:  rgba(239,68,68,0.08);
+      --teal-bord:  rgba(239,68,68,0.22);
       --text:       #f1f5f9;
       --muted:      #64748b;
       --muted2:     #94a3b8;
@@ -40,12 +49,20 @@
       height: 100vh; display: flex; align-items: center; justify-content: center;
       flex-direction: column; gap: 12px;
     }
-    .gate-logo { font-family: 'Satoshi', sans-serif; font-weight: 800; font-size: 1.3rem; }
-    .gate-logo span { color: var(--teal-b); }
+    .gate-logo {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .gate-logo-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .gate-logo-name { font-weight: 700; font-size: .95rem; }
+    .gate-logo-by { font-size: .66rem; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
     .gate-msg { font-size: .875rem; color: var(--muted); }
     .gate-spinner {
       width: 28px; height: 28px; border: 3px solid var(--border);
-      border-top-color: var(--teal-b); border-radius: 50%;
+      border-top-color: #ef4444; border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -62,12 +79,20 @@
       z-index: 50;
     }
     .sb-logo {
-      padding: 20px 20px 16px;
-      font-family: 'Satoshi', sans-serif; font-weight: 800; font-size: 1.1rem;
-      letter-spacing: -.02em; border-bottom: 1px solid var(--border);
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
       cursor: pointer;
+      display: flex; align-items: center; gap: 10px;
     }
-    .sb-logo span { color: var(--teal-b); }
+    .sb-logo-icon {
+      width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 10px rgba(239,68,68,0.28);
+    }
+    .sb-logo-text { line-height: 1; }
+    .sb-logo-name { font-weight: 700; font-size: .9rem; color: #fff; }
+    .sb-logo-sub { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-top: 2px; }
 
     .sb-nav { flex: 1; padding: 10px 8px; overflow-y: auto; }
     .sb-section { font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 10px 12px 6px; }
@@ -82,8 +107,11 @@
     }
     .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
     .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
-    .nav-item.active { background: var(--teal-glow); color: var(--teal-b); font-weight: 600; }
-    .nav-item.active svg { color: var(--teal-b); }
+    .nav-item.active {
+      background: rgba(239,68,68,0.08); color: #ef4444; font-weight: 600;
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+    .nav-item.active svg { color: #ef4444; }
 
     .nav-badge {
       margin-left: auto; background: var(--red); color: #fff;
@@ -100,7 +128,7 @@
     }
     .user-av {
       width: 32px; height: 32px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--teal), #7c3aed);
+      background: linear-gradient(135deg, #ef4444, #dc2626);
       display: flex; align-items: center; justify-content: center;
       font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0;
     }
@@ -308,24 +336,71 @@
 
     /* ADD RULE FORM */
     .add-rule-form {
-      padding: 20px; border-top: 1px solid var(--border);
-      display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 10px; align-items: end;
+      padding: 24px; border-top: 1px solid var(--border);
+    }
+    .add-rule-title {
+      font-weight: 700; font-size: .9rem; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px; color: var(--text);
+    }
+    .add-rule-title svg { width: 15px; height: 15px; color: var(--teal-b); flex-shrink: 0; }
+    .rule-form-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;
+    }
+    .rule-form-grid-3 {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px;
+    }
+    .rule-form-row {
+      display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px;
+    }
+    .rule-field { display: flex; flex-direction: column; gap: 5px; }
+    .add-rule-label {
+      font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--muted);
     }
     .rule-select, .rule-input {
       background: var(--card2); border: 1px solid var(--border2); border-radius: 8px;
       color: var(--text); padding: 9px 12px; font-size: .85rem; font-family: inherit;
       outline: none; transition: border-color .2s; width: 100%;
     }
-    .rule-select:focus, .rule-input:focus { border-color: var(--teal-bord); }
+    .rule-select:focus, .rule-input:focus { border-color: var(--teal-bord); box-shadow: 0 0 0 3px var(--teal-glow); }
+    .rule-input::placeholder { color: var(--muted); }
+    .rule-textarea {
+      background: var(--card2); border: 1px solid var(--border2); border-radius: 8px;
+      color: var(--text); padding: 9px 12px; font-size: .85rem; font-family: inherit;
+      outline: none; transition: border-color .2s; width: 100%; resize: vertical; min-height: 72px;
+    }
+    .rule-textarea:focus { border-color: var(--teal-bord); box-shadow: 0 0 0 3px var(--teal-glow); }
+    .rule-textarea::placeholder { color: var(--muted); }
+    .rule-form-footer {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+      padding-top: 14px; border-top: 1px solid var(--border);
+    }
+    .rule-form-hint { font-size: .78rem; color: var(--muted); }
+    .rule-form-hint code { color: var(--teal-b); font-family: 'SF Mono', monospace; font-size: .9em; }
     .rule-add-btn {
       background: var(--teal); color: #fff; border: none;
-      padding: 9px 16px; border-radius: 8px; font-size: .85rem; font-weight: 600;
-      cursor: pointer; font-family: inherit; transition: background .2s;
-      white-space: nowrap;
+      padding: 10px 22px; border-radius: 8px; font-size: .875rem; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background .2s, transform .15s;
+      display: inline-flex; align-items: center; gap: 7px;
     }
-    .rule-add-btn:hover { background: var(--teal-b); }
-    .add-rule-label { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
-    .rule-field { }
+    .rule-add-btn:hover { background: #dc2626; transform: translateY(-1px); }
+    .rule-add-btn svg { width: 14px; height: 14px; }
+    /* condition toggle */
+    .rule-cond-toggle {
+      display: flex; align-items: center; gap: 8px;
+      font-size: .82rem; color: var(--muted2); cursor: pointer;
+      user-select: none; margin-bottom: 14px;
+    }
+    .rule-cond-toggle input { width: 15px; height: 15px; accent-color: var(--teal); cursor: pointer; }
+    .rule-cond-extra { display: none; }
+    .rule-cond-extra.show { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    /* decision colors */
+    .rule-decision-block   { color: #f87171 !important; }
+    .rule-decision-approve { color: #fbbf24 !important; }
+    .rule-decision-allow   { color: #34d399 !important; }
+    option.opt-block  { color: #f87171; }
+    option.opt-pause  { color: #fbbf24; }
+    option.opt-allow  { color: #34d399; }
 
     /* ── SETTINGS TAB ──────────────────────────────────── */
     .settings-section { margin-bottom: 28px; }
@@ -417,7 +492,7 @@
     .loading-row td { text-align: center; color: var(--muted); padding: 40px !important; }
     .inline-spin {
       width: 18px; height: 18px; border: 2px solid var(--border);
-      border-top-color: var(--teal-b); border-radius: 50%;
+      border-top-color: #ef4444; border-radius: 50%;
       animation: spin .7s linear infinite; display: inline-block;
     }
 
@@ -451,7 +526,7 @@
 
     /* ── ONBOARDING PANEL ──────────────────────────────── */
     .onboard-panel {
-      background: linear-gradient(135deg, rgba(1,105,111,.10) 0%, rgba(1,144,154,.05) 100%);
+      background: linear-gradient(135deg, rgba(239,68,68,0.07) 0%, rgba(239,68,68,0.03) 100%);
       border: 1px solid var(--teal-bord);
       border-radius: 16px; padding: 24px 28px;
       margin-bottom: 24px; position: relative;
@@ -482,7 +557,7 @@
     }
     .onboard-copy-val {
       font-family: 'SF Mono','Cascadia Code',monospace; font-size: .78rem;
-      color: var(--teal-b); background: rgba(1,105,111,.12);
+      color: #ef4444; background: rgba(239,68,68,0.08);
       border: 1px solid var(--teal-bord); border-radius: 6px;
       padding: 5px 10px; word-break: break-all; flex: 1; min-width: 0;
     }
@@ -499,7 +574,7 @@
       font-size: .78rem; color: var(--muted); margin-top: 6px; display: block;
     }
     .onboard-hint code {
-      color: var(--teal-b); background: rgba(1,105,111,.10);
+      color: #ef4444; background: rgba(239,68,68,0.07);
       padding: 1px 5px; border-radius: 4px;
       font-family: 'SF Mono',monospace; font-size: .9em;
     }
@@ -524,7 +599,7 @@
       transition: background .2s;
     }
     .onboard-examples-btn svg { width: 14px; height: 14px; }
-    .onboard-examples-btn:hover { background: rgba(1,105,111,.20); }
+    .onboard-examples-btn:hover { background: rgba(239,68,68,0.15); }
     .onboard-links { font-size: .82rem; color: var(--muted); }
     .onboard-link-btn {
       background: none; border: none; color: var(--teal-b); cursor: pointer;
@@ -608,13 +683,152 @@
     }
     .dex-copy-btn svg { width: 11px; height: 11px; }
     .dex-copy-btn:hover { background: rgba(255,255,255,.12); color: var(--text); }
+
+/* ── TOP BAR ─────────────────────────────────────────────── */
+.top-bar {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 12px; padding: 0 0 20px 0; margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.top-bar-live {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: .72rem; font-weight: 700; color: #34d399; letter-spacing: .04em;
+}
+.live-dot-top {
+  width: 7px; height: 7px; background: #34d399; border-radius: 50%;
+  animation: livepulse 1.4s ease-in-out infinite;
+}
+@keyframes livepulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.75)} }
+.top-bar-bell {
+  position: relative; background: var(--card); border: 1px solid var(--border);
+  width: 36px; height: 36px; border-radius: 9px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color .2s;
+}
+.top-bar-bell:hover { border-color: var(--border2); }
+.top-bar-bell svg { width: 15px; height: 15px; color: var(--muted2); }
+.bell-badge {
+  position: absolute; top: -5px; right: -5px;
+  background: #ef4444; color: #fff; font-size: .58rem; font-weight: 800;
+  min-width: 16px; height: 16px; border-radius: 8px; padding: 0 4px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--bg);
+}
+
+/* ── KPI CARDS (new layout) ──────────────────────────────── */
+.kpi-card {
+  position: relative; overflow: hidden;
+}
+.kpi-icon-wrap {
+  position: absolute; top: 18px; right: 18px;
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.kpi-icon-wrap svg { width: 18px; height: 18px; }
+.kpi-icon-blue   { background: rgba(59,130,246,0.12);  border: 1px solid rgba(59,130,246,0.22); color: #60a5fa; }
+.kpi-icon-teal   { background: rgba(6,182,212,0.12);   border: 1px solid rgba(6,182,212,0.22);  color: #22d3ee; }
+.kpi-icon-red    { background: rgba(239,68,68,0.12);   border: 1px solid rgba(239,68,68,0.22);  color: #f87171; }
+.kpi-icon-green  { background: rgba(16,185,129,0.12);  border: 1px solid rgba(16,185,129,0.22); color: #34d399; }
+.kpi-label {
+  font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+  display: block;
+}
+.kpi-value { font-size: 2.2rem; }
+.kpi-sub { font-size: .78rem; margin-top: 6px; }
+
+/* ── OV GRID (2-col rows) ────────────────────────────────── */
+.ov-row2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+.ov-row2-eq { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+@media (max-width: 1100px) { .ov-row2, .ov-row2-eq { grid-template-columns: 1fr; } }
+
+/* ── CHART CARD ──────────────────────────────────────────── */
+.chart-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+}
+.chart-hdr {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.chart-hdr h3 { font-weight: 700; font-size: .975rem; }
+.chart-live-badge {
+  background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: .68rem; font-weight: 700; color: #34d399; letter-spacing: .04em;
+}
+.chart-body { padding: 20px; }
+.trend-svg-wrap { width: 100%; }
+
+/* ── DONUT CHART ─────────────────────────────────────────── */
+.donut-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 16px 20px 20px;
+}
+.donut-svg-container { position: relative; width: 160px; height: 160px; margin-bottom: 20px; }
+.donut-label { text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
+.donut-label-num { font-size: 1.8rem; font-weight: 800; font-family: 'Satoshi', sans-serif; letter-spacing: -.03em; line-height: 1; }
+.donut-label-txt { font-size: .7rem; color: var(--muted); margin-top: 2px; }
+.donut-legend { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.dl-row { display: flex; align-items: center; gap: 10px; }
+.dl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.dl-name { font-size: .82rem; color: var(--muted2); flex: 1; }
+.dl-val { font-size: .82rem; font-weight: 700; }
+
+/* ── CRITICAL ALERTS LIST ────────────────────────────────── */
+.cal-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 20px; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .15s;
+}
+.cal-item:last-child { border-bottom: none; }
+.cal-item:hover { background: rgba(239,68,68,0.04); }
+.cal-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; flex-shrink: 0; animation: livepulse 1.8s ease-in-out infinite; }
+.cal-info { flex: 1; min-width: 0; }
+.cal-action { font-size: .85rem; font-weight: 600; color: var(--text); }
+.cal-agent  { font-size: .75rem; color: var(--muted); margin-top: 1px; }
+.cal-score {
+  background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25);
+  color: #f87171; font-size: .72rem; font-weight: 800;
+  border-radius: 6px; padding: 2px 8px; flex-shrink: 0;
+}
+
+/* ── LIVE FEED ────────────────────────────────────────────── */
+.live-feed-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 11px 20px; border-bottom: 1px solid var(--border);
+}
+.live-feed-item:last-child { border-bottom: none; }
+.lf-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.lf-dot-green { background: #10b981; }
+.lf-dot-yellow { background: #f59e0b; }
+.lf-dot-red { background: #ef4444; }
+.lf-info { flex: 1; min-width: 0; }
+.lf-verb { font-size: .82rem; font-weight: 600; color: var(--text); }
+.lf-desc { font-size: .75rem; color: var(--muted2); margin-top: 1px; }
+.lf-agent { font-size: .7rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; text-align: right; margin-top: 1px; }
+.streaming-badge {
+  background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: .68rem; font-weight: 700; color: #34d399; letter-spacing: .04em;
+  display: inline-flex; align-items: center; gap: 5px;
+}
   </style>
 </head>
 <body>
 
 <!-- AUTH GATE (shown until auth verified) -->
 <div id="auth-gate">
-  <div class="gate-logo">AgentShield<span>.</span></div>
+  <div class="gate-logo">
+    <div class="gate-logo-icon">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div>
+      <div class="gate-logo-name">Agent Shield</div>
+      <div class="gate-logo-by">by allkinz</div>
+    </div>
+  </div>
   <div class="gate-spinner"></div>
   <div class="gate-msg">Verifying session…</div>
 </div>
@@ -623,7 +837,15 @@
 <div id="app">
   <!-- Sidebar -->
   <aside class="sidebar">
-    <div class="sb-logo" onclick="location.href='/'">AgentShield<span>.</span></div>
+    <div class="sb-logo" onclick="location.href='/'">
+      <div class="sb-logo-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="sb-logo-text">
+        <div class="sb-logo-name">Agent Shield</div>
+        <div class="sb-logo-sub">Admin Console</div>
+      </div>
+    </div>
     <nav class="sb-nav">
       <div class="sb-section">Main</div>
       <div class="nav-item active" data-tab="overview" onclick="switchTab('overview')">
@@ -658,9 +880,14 @@
       <button class="btn-signout" onclick="doLogout()">
         <i data-lucide="log-out"></i> Sign out
       </button>
-      <a class="support-btn" href="mailto:manager@allkinz.com?subject=AgentShield%20Beta%20Feedback" target="_blank">
+      <a class="support-btn" href="mailto:manager@allkinz.com?subject=AgentShield%20Beta%20Feedback" target="_blank" rel="noopener noreferrer">
         <i data-lucide="message-circle"></i> Talk to founder / report issue
       </a>
+      <div style="display:flex;gap:12px;padding:8px 16px;justify-content:center">
+        <a href="/privacy.html" style="font-size:.68rem;color:var(--muted);text-decoration:none" target="_blank">Privacy</a>
+        <span style="color:var(--muted);font-size:.68rem">·</span>
+        <a href="/terms.html" style="font-size:.68rem;color:var(--muted);text-decoration:none" target="_blank">Terms</a>
+      </div>
     </div>
   </aside>
 
@@ -669,34 +896,107 @@
 
     <!-- ── OVERVIEW ─────────────────────────────────── -->
     <div id="tab-overview" class="tab-panel active">
+
+      <!-- Top bar -->
+      <div class="top-bar">
+        <div class="top-bar-bell" title="Alerts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="bell-badge" id="bell-badge">5</span>
+        </div>
+        <div class="top-bar-live">
+          <div class="live-dot-top"></div>
+          LIVE
+        </div>
+      </div>
+
       <div class="tab-hd">
         <h2>Overview</h2>
-        <p id="welcome-line">Loading your workspace…</p>
+        <p id="welcome-line">Real-time security operations center</p>
       </div>
-      <div class="kpi-grid">
+
+      <!-- KPI Row -->
+      <div class="kpi-grid" style="margin-bottom:16px">
         <div class="kpi-card kpi-total">
-          <div class="kpi-label"><i data-lucide="zap"></i> Actions today</div>
+          <div class="kpi-icon-wrap kpi-icon-teal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+          </div>
+          <div class="kpi-label">Total Agents</div>
           <div class="kpi-value" id="kpi-total">—</div>
-          <div class="kpi-sub">All agent actions in last 24h</div>
+          <div class="kpi-sub" id="kpi-active-sub">— active</div>
         </div>
-        <div class="kpi-card kpi-blocked">
-          <div class="kpi-label"><i data-lucide="shield-off"></i> Blocked</div>
-          <div class="kpi-value" id="kpi-blocked">—</div>
-          <div class="kpi-sub">Prevented by risk threshold</div>
+        <div class="kpi-card" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px">
+          <div class="kpi-icon-wrap kpi-icon-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="kpi-label">Actions Today</div>
+          <div class="kpi-value" id="kpi-actions" style="color:var(--text)">—</div>
+          <div class="kpi-sub" id="kpi-blocked-sub" style="color:var(--muted)">— blocked</div>
         </div>
         <div class="kpi-card kpi-pending">
-          <div class="kpi-label"><i data-lucide="clock"></i> Pending review</div>
-          <div class="kpi-value" id="kpi-pending">—</div>
-          <div class="kpi-sub">Waiting for your approval</div>
+          <div class="kpi-icon-wrap kpi-icon-red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="kpi-label">Critical Incidents</div>
+          <div class="kpi-value" id="kpi-incidents">—</div>
+          <div class="kpi-sub" id="kpi-pending-sub" style="color:var(--muted)">— pending</div>
         </div>
         <div class="kpi-card kpi-rules">
-          <div class="kpi-label"><i data-lucide="layers"></i> Active rules</div>
-          <div class="kpi-value" id="kpi-rules">—</div>
-          <div class="kpi-sub">Policy rules currently enabled</div>
+          <div class="kpi-icon-wrap kpi-icon-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="kpi-label">Blocked Actions</div>
+          <div class="kpi-value" id="kpi-blocked">—</div>
+          <div class="kpi-sub" style="color:var(--muted)">Last 24h</div>
         </div>
       </div>
-      <!-- Onboarding panel — shown until first action is recorded -->
-      <div class="onboard-panel" id="onboard-panel">
+
+      <!-- Charts Row: Incident Trend + Agent Status -->
+      <div class="ov-row2">
+        <div class="chart-card">
+          <div class="chart-hdr">
+            <h3>Incident Trend (Last 7 Days)</h3>
+            <span class="chart-live-badge">Live</span>
+          </div>
+          <div class="chart-body">
+            <div class="trend-svg-wrap" id="trend-chart-wrap">
+              <!-- SVG trend chart injected by JS -->
+            </div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-hdr">
+            <h3>Agent Status</h3>
+          </div>
+          <div class="donut-wrap" id="donut-wrap">
+            <!-- Donut chart injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Critical Alerts + Live Activity -->
+      <div class="ov-row2-eq">
+        <div class="chart-card">
+          <div class="chart-hdr">
+            <h3>Critical Alerts</h3>
+            <span style="font-size:.8rem;color:var(--teal-b);cursor:pointer" onclick="switchTab('actions')">View all</span>
+          </div>
+          <div id="critical-alerts-list">
+            <!-- populated by JS -->
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-hdr">
+            <h3>Live Activity</h3>
+            <span class="streaming-badge"><span class="live-dot-top" style="width:6px;height:6px"></span>STREAMING</span>
+          </div>
+          <div id="live-activity-feed">
+            <!-- populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Onboarding panel (kept, hidden when not needed) -->
+      <div class="onboard-panel" id="onboard-panel" style="display:none">
         <div class="onboard-dismiss" onclick="dismissOnboarding()" title="Dismiss">✕</div>
         <div class="onboard-header">
           <div class="onboard-icon">🚀</div>
@@ -747,19 +1047,6 @@
         </div>
       </div>
 
-      <div class="dash-card">
-        <div class="card-hdr">
-          <h3>Recent actions</h3>
-          <span class="card-hdr-sub" style="cursor:pointer;color:var(--teal-b)" onclick="switchTab('actions')">View all →</span>
-        </div>
-        <div id="recent-body">
-          <div class="empty-state">
-            <div class="empty-icon"><i data-lucide="activity"></i></div>
-            <h4>No actions yet</h4>
-            <p>Once your agents start running, their actions will appear here in real time.</p>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- ── ACTIONS ──────────────────────────────────── -->
@@ -820,43 +1107,99 @@
     <div id="tab-rules" class="tab-panel">
       <div class="tab-hd">
         <h2>Rules</h2>
-        <p>Define exactly which actions should always be blocked, allowed, or require approval.</p>
+        <p>Define exactly which actions should always be blocked, paused for review, or allowed. Full custom control — any action type, any condition.</p>
       </div>
       <div class="dash-card">
         <div id="rules-list"></div>
         <div class="add-rule-form">
-          <div class="rule-field">
-            <div class="add-rule-label">Action type</div>
-            <select class="rule-select" id="rule-action">
-              <option value="file_delete">file_delete</option>
-              <option value="delete_file">delete_file</option>
-              <option value="shell_execute">shell_execute</option>
-              <option value="send_email">send_email</option>
-              <option value="send_sms">send_sms</option>
-              <option value="payment">payment</option>
-              <option value="transfer_funds">transfer_funds</option>
-              <option value="deploy">deploy</option>
-              <option value="run_code">run_code</option>
-              <option value="write_file">write_file</option>
-              <option value="fetch_url">fetch_url</option>
-              <option value="*">* (all actions)</option>
-            </select>
+          <div class="add-rule-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Rule
           </div>
-          <div class="rule-field">
-            <div class="add-rule-label">Decision</div>
-            <select class="rule-select" id="rule-decision">
-              <option value="block">Always block</option>
-              <option value="require_approval">Require approval</option>
-              <option value="allow">Always allow</option>
-            </select>
+
+          <!-- Row 1: Name + Action Type -->
+          <div class="rule-form-grid">
+            <div class="rule-field">
+              <div class="add-rule-label">Rule name <span style="color:var(--red)">*</span></div>
+              <input class="rule-input" type="text" id="rule-name" placeholder="e.g. Block bulk deletes, No prod deploys…">
+            </div>
+            <div class="rule-field">
+              <div class="add-rule-label">Action type <span style="color:var(--red)">*</span></div>
+              <input class="rule-input" type="text" id="rule-action" list="action-suggestions"
+                placeholder="Type any action or pick a suggestion…">
+              <datalist id="action-suggestions">
+                <option value="delete_file">
+                <option value="file_delete">
+                <option value="shell_execute">
+                <option value="send_email">
+                <option value="send_sms">
+                <option value="send_bulk_email">
+                <option value="payment">
+                <option value="transfer_funds">
+                <option value="deploy">
+                <option value="deploy_to_prod">
+                <option value="run_code">
+                <option value="write_file">
+                <option value="read_file">
+                <option value="fetch_url">
+                <option value="db_query">
+                <option value="db_delete">
+                <option value="api_call">
+                <option value="webhook">
+                <option value="create_user">
+                <option value="delete_user">
+                <option value="modify_permissions">
+                <option value="*">
+              </datalist>
+            </div>
           </div>
-          <div class="rule-field" style="flex:1">
-            <div class="add-rule-label">Note (optional)</div>
-            <input class="rule-input" type="text" id="rule-note" placeholder="e.g. Too risky for automation">
+
+          <!-- Row 2: Decision + Priority -->
+          <div class="rule-form-grid">
+            <div class="rule-field">
+              <div class="add-rule-label">Decision <span style="color:var(--red)">*</span></div>
+              <select class="rule-select" id="rule-decision">
+                <option value="block">🚫 Always block</option>
+                <option value="require_approval">⏸ Require approval</option>
+                <option value="allow">✅ Always allow</option>
+              </select>
+            </div>
+            <div class="rule-field">
+              <div class="add-rule-label">Priority <span style="color:var(--muted)">(higher = evaluated first)</span></div>
+              <input class="rule-input" type="number" id="rule-priority" placeholder="0" min="0" max="100" value="0">
+            </div>
           </div>
-          <div class="rule-field">
-            <div class="add-rule-label">&nbsp;</div>
-            <button class="rule-add-btn" onclick="addRule()">+ Add rule</button>
+
+          <!-- Condition toggle -->
+          <label class="rule-cond-toggle">
+            <input type="checkbox" id="rule-cond-check" onchange="document.getElementById('rule-cond-extra').classList.toggle('show',this.checked)">
+            Add condition (only trigger this rule when…)
+          </label>
+          <div class="rule-cond-extra" id="rule-cond-extra">
+            <div class="rule-field">
+              <div class="add-rule-label">Risk score is greater than</div>
+              <input class="rule-input" type="number" id="rule-cond-risk" placeholder="0.75" min="0" max="1" step="0.01">
+            </div>
+            <div class="rule-field">
+              <div class="add-rule-label">Agent name contains</div>
+              <input class="rule-input" type="text" id="rule-cond-agent" placeholder="e.g. prod-, finance-…">
+            </div>
+          </div>
+
+          <!-- Note -->
+          <div class="rule-field" style="margin-bottom:18px">
+            <div class="add-rule-label">Description / note</div>
+            <textarea class="rule-textarea" id="rule-note" placeholder="Explain why this rule exists, e.g. 'Finance agents must never auto-pay without human sign-off.'"></textarea>
+          </div>
+
+          <div class="rule-form-footer">
+            <div class="rule-form-hint">
+              Use <code>*</code> as action type to match all actions. Priority 100 = highest precedence.
+            </div>
+            <button class="rule-add-btn" onclick="addRule()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Save Rule
+            </button>
           </div>
         </div>
       </div>
@@ -1159,8 +1502,20 @@ let auditRows    = [];
 
 // ── Auth check (runs immediately) ─────────────────────────────
 (function checkAuth() {
-  // Check for OAuth callback tokens in URL
+  // Dev preview bypass
   const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('preview') === '1') {
+    APP.token = 'preview';
+    APP.user  = { id: 1, email: 'admin@agentshield.io', name: 'Admin', role: 'admin', plan: 'pro', workspace: 'ws_demo123' };
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    lucide.createIcons();
+    initOverviewCharts();
+    initDashboard();
+    return;
+  }
+
+  // Check for OAuth callback tokens in URL
   const urlToken = urlParams.get('token');
   const urlWorkspace = urlParams.get('workspace_id');
 
@@ -1190,6 +1545,7 @@ let auditRows    = [];
     document.getElementById('auth-gate').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     lucide.createIcons();
+    initOverviewCharts();
     initDashboard();
   } catch (e) {
     sessionStorage.removeItem('shield_token');
@@ -1230,6 +1586,7 @@ function initOnboardingPanel() {
   const panel = document.getElementById('onboard-panel');
   if (!panel) return;
   if (dismissed) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
 
   // Populate API key
   const wsId = APP.user?.workspace || '';
@@ -1378,10 +1735,17 @@ async function loadOverview() {
     const rules     = rulData.rows || rulData.rules || rulData.data || (Array.isArray(rulData) ? rulData : []);
     const activeRules = rules.filter(r => r.enabled !== false).length;
 
-    document.getElementById('kpi-total').textContent   = total;
-    document.getElementById('kpi-blocked').textContent = blocked;
-    document.getElementById('kpi-pending').textContent = approvals.length;
-    document.getElementById('kpi-rules').textContent   = activeRules;
+    const _set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    _set('kpi-total',     total);
+    _set('kpi-blocked',   blocked);
+    _set('kpi-pending',   approvals.length);   // legacy (may not exist in new overview)
+    _set('kpi-rules',     activeRules);         // legacy (may not exist in new overview)
+    _set('kpi-actions',   total);
+    _set('kpi-incidents', approvals.length);
+    _set('kpi-active-sub',   activeRules + ' active');
+    _set('kpi-blocked-sub',  blocked + ' blocked');
+    _set('kpi-pending-sub',  approvals.length + ' pending');
+
 
     // Update approval badge
     const badgeEl = document.getElementById('apv-badge');
@@ -1406,22 +1770,199 @@ async function loadOverview() {
       }
     }
 
-    // Render recent actions
-    const rows = Array.isArray(actions) ? actions.slice(0, 5) : [];
+    // Feed real data into overview charts
+    const blockedActions = actions.filter(a => a.hook_verdict === 'BLOCK' || a.status === 'denied' || a.status === 'blocked');
+    renderCriticalAlerts(blockedActions);
+    renderLiveActivity(actions.slice(0, 6));
+    // Trend: build 7-day counts from actions
+    const trendData = buildTrendData(actions);
+    window._lastTrendData = trendData;
+    renderTrendChart(trendData);
+    // Agent status from rules/approvals (approximate from available data)
+    renderDonutChart(actData.agents || null);
+
+    // Render recent actions (element may not exist in redesigned overview)
     const recentEl = document.getElementById('recent-body');
-    if (rows.length === 0) {
-      recentEl.innerHTML = `<div class="empty-state">
-        <div class="empty-icon"><i data-lucide="activity"></i></div>
-        <h4>No actions yet</h4>
-        <p>Once your agents start running, their actions will appear here in real time.</p>
-      </div>`;
-    } else {
-      recentEl.innerHTML = buildActionsTable(rows, false);
+    if (recentEl) {
+      const rows = Array.isArray(actions) ? actions.slice(0, 5) : [];
+      recentEl.innerHTML = rows.length === 0
+        ? `<div class="empty-state"><div class="empty-icon"><i data-lucide="activity"></i></div><h4>No actions yet</h4><p>Once your agents start running, their actions will appear here in real time.</p></div>`
+        : buildActionsTable(rows, false);
     }
     lucide.createIcons();
   } catch (e) {
     showToast(e.message, 'error');
   }
+}
+
+function buildTrendData(actions) {
+  if (!actions || !actions.length) return null;
+  const counts = new Array(7).fill(0);
+  const now = Date.now();
+  actions.forEach(a => {
+    const ts = a.created_at ? new Date(a.created_at).getTime() : 0;
+    const dayAgo = Math.floor((now - ts) / 86400000);
+    if (dayAgo >= 0 && dayAgo < 7) counts[6 - dayAgo]++;
+  });
+  return counts;
+}
+
+// ── Overview Charts & Live Feed ──────────────────────────────
+function renderTrendChart(vals) {
+  const wrap = document.getElementById('trend-chart-wrap');
+  if (!wrap) return;
+  // If no real data, show empty state
+  const data = vals && vals.length ? vals : null;
+  if (!data || data.every(v => v === 0)) {
+    wrap.innerHTML = `<div style="height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted)">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span style="font-size:.8rem">No incident data yet</span>
+      <span style="font-size:.72rem;color:var(--muted)">Trend will appear once your agents start running</span>
+    </div>`;
+    return;
+  }
+  const W = wrap.offsetWidth || 500, H = 180;
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const max = Math.max(...data) * 1.2 || 1;
+  const pad = { t:16, r:20, b:32, l:36 };
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+  const xs = data.map((_,i) => pad.l + (i/(data.length-1))*iW);
+  const ys = data.map(v => pad.t + iH - (v/max)*iH);
+  let area = `M${xs[0]},${H-pad.b}`;
+  xs.forEach((x,i) => { area += ` L${x},${ys[i]}`; });
+  area += ` L${xs[xs.length-1]},${H-pad.b} Z`;
+  let line = `M${xs[0]},${ys[0]}`;
+  xs.forEach((x,i) => { if(i>0) line += ` L${x},${ys[i]}`; });
+  const svgId = 'trend-grad-' + Math.random().toString(36).slice(2,7);
+  wrap.innerHTML = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="${svgId}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+    </linearGradient></defs>
+    ${[0.25,0.5,0.75,1].map(t=>`<line x1="${pad.l}" y1="${pad.t+iH*t}" x2="${W-pad.r}" y2="${pad.t+iH*t}" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>`).join('')}
+    <path d="${area}" fill="url(#${svgId})"/>
+    <path d="${line}" fill="none" stroke="#ef4444" stroke-width="2" stroke-linejoin="round"/>
+    ${xs.map((x,i)=>`<circle cx="${x}" cy="${ys[i]}" r="3.5" fill="#ef4444" stroke="#0a0a0f" stroke-width="2"/>`).join('')}
+    ${days.slice(0,data.length).map((d,i)=>`<text x="${xs[i]}" y="${H-6}" text-anchor="middle" font-size="10" fill="#64748b" font-family="Inter,sans-serif">${d}</text>`).join('')}
+    ${[0,Math.round(max/2),Math.round(max)].map((v,i)=>`<text x="${pad.l-6}" y="${pad.t+iH-(i*iH/2)+4}" text-anchor="end" font-size="10" fill="#64748b" font-family="Inter,sans-serif">${v}</text>`).join('')}
+  </svg>`;
+}
+
+function renderDonutChart(agentData) {
+  const wrap = document.getElementById('donut-wrap');
+  if (!wrap) return;
+  const active = agentData?.active || 0;
+  const killed = agentData?.killed || 0;
+  const paused = agentData?.paused || 0;
+  const total  = agentData?.total  || (active + killed + paused);
+  if (!total) {
+    wrap.innerHTML = `<div style="padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted)">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+      <span style="font-size:.82rem">No agents connected</span>
+      <span style="font-size:.72rem;color:var(--muted)">Connect an agent to see status</span>
+    </div>`;
+    return;
+  }
+  const R = 64, r = 44, cx = 80, cy = 80;
+  function polarToXY(angle, radius) {
+    const rad = (angle - 90) * Math.PI / 180;
+    return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
+  }
+  function arcPath(startAngle, endAngle, outerR, innerR) {
+    const s1 = polarToXY(startAngle, outerR), e1 = polarToXY(endAngle, outerR);
+    const s2 = polarToXY(endAngle, innerR), e2 = polarToXY(startAngle, innerR);
+    const large = (endAngle - startAngle) > 180 ? 1 : 0;
+    return `M${s1.x},${s1.y} A${outerR},${outerR},0,${large},1,${e1.x},${e1.y} L${s2.x},${s2.y} A${innerR},${innerR},0,${large},0,${e2.x},${e2.y} Z`;
+  }
+  const segments = [
+    { val: active, color: '#06b6d4', label: 'Active', gap: 3 },
+    { val: killed, color: '#ef4444', label: 'Killed', gap: 3 },
+    { val: paused, color: '#f59e0b', label: 'Paused', gap: 3 },
+  ];
+  let angle = 0;
+  const paths = segments.map(seg => {
+    const sweep = (seg.val / total) * 360;
+    const path = arcPath(angle + 2, angle + sweep - 2, R, r);
+    angle += sweep;
+    return `<path d="${path}" fill="${seg.color}" opacity="0.9"/>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <div class="donut-svg-container">
+      <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="${cx}" cy="${cy}" r="${R+4}" fill="rgba(255,255,255,0.03)"/>
+        ${paths}
+      </svg>
+      <div class="donut-label">
+        <div class="donut-label-num">${total}</div>
+        <div class="donut-label-txt">Total</div>
+      </div>
+    </div>
+    <div class="donut-legend">
+      <div class="dl-row"><div class="dl-dot" style="background:#06b6d4"></div><div class="dl-name">Active</div><div class="dl-val" style="color:#22d3ee">${active}</div></div>
+      <div class="dl-row"><div class="dl-dot" style="background:#ef4444"></div><div class="dl-name">Killed</div><div class="dl-val" style="color:#f87171">${killed}</div></div>
+      <div class="dl-row"><div class="dl-dot" style="background:#f59e0b"></div><div class="dl-name">Paused</div><div class="dl-val" style="color:#fbbf24">${paused}</div></div>
+    </div>
+  `;
+}
+
+function renderCriticalAlerts(data) {
+  const el = document.getElementById('critical-alerts-list');
+  if (!el) return;
+  const items = (Array.isArray(data) ? data : []).slice(0, 5);
+  if (!items.length) {
+    el.innerHTML = `<div style="padding:32px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted)">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span style="font-size:.82rem">No critical alerts</span>
+      <span style="font-size:.72rem">All clear — no high-risk actions detected</span>
+    </div>`;
+    return;
+  }
+  el.innerHTML = items.map(a => `
+    <div class="cal-item" onclick="switchTab('actions')">
+      <div class="cal-dot"></div>
+      <div class="cal-info">
+        <div class="cal-action">${esc(a.action_type||a.action||'action')} — <span style="color:var(--muted2)">${esc(a.agent_name||a.agent||'')}</span></div>
+        <div class="cal-agent">${esc(a.note||a.desc||a.payload_summary||'')}</div>
+      </div>
+      <div class="cal-score">${Math.round((a.risk_score||a.score||0)*100)||'—'}</div>
+    </div>
+  `).join('');
+}
+
+function renderLiveActivity(data) {
+  const el = document.getElementById('live-activity-feed');
+  if (!el) return;
+  const items = (Array.isArray(data) ? data : []).slice(0, 6);
+  if (!items.length) {
+    el.innerHTML = `<div style="padding:32px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted)">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span style="font-size:.82rem">No activity yet</span>
+      <span style="font-size:.72rem">Live events will stream here as your agents run</span>
+    </div>`;
+    return;
+  }
+  const dotColor = { allowed:'green', blocked:'red', denied:'red', pending:'yellow', approved:'green' };
+  el.innerHTML = items.map(item => {
+    const verdict = (item.hook_verdict||item.status||'').toLowerCase();
+    const dot = dotColor[verdict] || 'yellow';
+    return `<div class="live-feed-item">
+      <div class="lf-dot lf-dot-${dot}"></div>
+      <div class="lf-info">
+        <div class="lf-verb">${esc(item.action_type||item.verb||'action')}</div>
+        <div class="lf-desc">${esc(item.payload_summary||item.desc||verdict)}</div>
+      </div>
+      <div class="lf-agent">${esc(item.agent_name||item.agent||'')}</div>
+    </div>`;
+  }).join('');
+}
+
+function initOverviewCharts() {
+  renderTrendChart(null);
+  renderDonutChart(null);
+  renderCriticalAlerts(null);
+  renderLiveActivity(null);
+  window.addEventListener('resize', () => renderTrendChart(window._lastTrendData || null));
 }
 
 // ── ACTIONS ────────────────────────────────────────────────────
@@ -1581,7 +2122,13 @@ async function loadRules() {
       </div>`;
       lucide.createIcons(); return;
     }
-    list.innerHTML = rows.map(r => `
+    const decisionColor = { block:'#f87171', require_approval:'#fbbf24', allow:'#34d399' };
+    const decisionLabel = { block:'BLOCK', require_approval:'APPROVAL', allow:'ALLOW' };
+    list.innerHTML = rows.map(r => {
+      const dc = decisionColor[r.decision] || '#94a3b8';
+      const dl = decisionLabel[r.decision] || (r.decision||'BLOCK').toUpperCase();
+      const conds = r.conditions ? Object.entries(r.conditions).filter(([,v])=>v!=null).map(([k,v])=>`${k}: ${v}`).join(', ') : '';
+      return `
       <div class="rule-item" id="rule-${esc(r.id)}">
         <label class="toggle">
           <input type="checkbox" ${r.enabled !== false ? 'checked' : ''} onchange="toggleRule('${esc(r.id)}',this.checked)">
@@ -1589,12 +2136,17 @@ async function loadRules() {
           <div class="toggle-thumb"></div>
         </label>
         <div class="rule-info">
-          <div class="rule-name"><code style="color:var(--teal-b)">${esc(r.action_type||'*')}</code> → ${esc(r.decision||'block')}</div>
-          <div class="rule-descr">${esc(r.note || r.description || 'No note')}</div>
+          <div class="rule-name">
+            ${r.name ? `<span style="color:var(--text)">${esc(r.name)}</span> &nbsp;` : ''}
+            <code style="color:var(--teal-b);font-size:.8rem">${esc(r.action_type||'*')}</code>
+            &nbsp;<span style="color:${dc};font-size:.7rem;font-weight:800;background:${dc}18;border:1px solid ${dc}33;padding:2px 7px;border-radius:5px">${dl}</span>
+            ${r.priority ? `<span style="font-size:.7rem;color:var(--muted);margin-left:6px">p${r.priority}</span>` : ''}
+          </div>
+          <div class="rule-descr">${esc(r.note || r.description || '')}${conds ? ` <span style="color:var(--muted);font-size:.72rem">· ${esc(conds)}</span>` : ''}</div>
         </div>
         <button class="rule-del" onclick="deleteRule('${esc(r.id)}')" title="Delete rule"><i data-lucide="trash-2"></i></button>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
     lucide.createIcons();
   } catch (e) {
     if (list) list.innerHTML = `<div class="empty-state"><p style="color:var(--red)">${e.message}</p></div>`;
@@ -1603,17 +2155,38 @@ async function loadRules() {
 }
 
 async function addRule() {
-  const action   = document.getElementById('rule-action').value;
+  const name     = (document.getElementById('rule-name')?.value || '').trim();
+  const action   = (document.getElementById('rule-action')?.value || '').trim();
   const decision = document.getElementById('rule-decision').value;
-  const note     = document.getElementById('rule-note').value.trim();
+  const priority = parseInt(document.getElementById('rule-priority')?.value || '0', 10) || 0;
+  const note     = (document.getElementById('rule-note')?.value || '').trim();
+  const condEnabled = document.getElementById('rule-cond-check')?.checked;
+  const condRisk  = condEnabled ? parseFloat(document.getElementById('rule-cond-risk')?.value) : null;
+  const condAgent = condEnabled ? (document.getElementById('rule-cond-agent')?.value || '').trim() : null;
+
+  if (!action) { showToast('Action type is required', 'error'); return; }
+
+  const body = {
+    name: name || action + ' → ' + decision,
+    action_type: action,
+    decision,
+    priority,
+    note,
+    enabled: true,
+    ...(condEnabled && { conditions: { risk_gt: isNaN(condRisk) ? undefined : condRisk, agent_contains: condAgent || undefined } }),
+  };
+
   try {
-    const res = await apiFetch('/api/rules', {
-      method: 'POST',
-      body: JSON.stringify({ action_type: action, decision, note, enabled: true }),
+    const res = await apiFetch('/api/rules', { method: 'POST', body: JSON.stringify(body) });
+    if (!res.ok) { const d = await res.json().catch(()=>({})); showToast(d.error||'Failed to save rule','error'); return; }
+    // Reset form
+    ['rule-name','rule-action','rule-note','rule-cond-risk','rule-cond-agent'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
     });
-    if (!res.ok) { const d = await res.json().catch(()=>({})); showToast(d.error||'Failed','error'); return; }
-    document.getElementById('rule-note').value = '';
-    showToast('Rule added ✓', 'success');
+    document.getElementById('rule-priority').value = '0';
+    const chk = document.getElementById('rule-cond-check');
+    if (chk) { chk.checked = false; document.getElementById('rule-cond-extra').classList.remove('show'); }
+    showToast('Rule saved ✓', 'success');
     const ruleKey = `shield_first_rule_${APP.user?.workspace || 'default'}`;
     if (!localStorage.getItem(ruleKey)) { localStorage.setItem(ruleKey, '1'); track('first_rule_created'); }
     loadRules();

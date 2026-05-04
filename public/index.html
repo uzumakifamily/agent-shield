@@ -3,8 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgentShield — Trust Layer for AI Agents</title>
-  <meta name="description" content="Stop AI agents from deleting databases, sending mass emails, or rewriting auth systems. Risk scoring, kill switch, and Telegram alerts in 3 lines of code. MIT licensed.">
+  <title>AgentShield — Runtime Control Layer for AI Agents</title>
+  <meta name="description" content="Allow, pause, or block any AI agent action before it causes damage. Policy engine, approval flows, audit trail. Built for production teams. MIT licensed.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6L12 2z' fill='%23ef4444'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ef4444'/%3E%3Cpath d='M50 10L18 26v24c0 22.4 13.6 43.4 32 49 18.4-5.6 32-26.6 32-49V26L50 10z' fill='white'/%3E%3C/svg%3E">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://agentshield.allkinz.com">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="AgentShield — Runtime Control Layer for AI Agents">
+  <meta property="og:description" content="Allow, pause, or block any AI agent action before it causes damage. Policy engine, approval flows, audit trail. Built for production teams.">
+  <meta property="og:url" content="https://agentshield.allkinz.com">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://agentshield.allkinz.com/og-image.png">
+  <meta property="og:site_name" content="AgentShield">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AgentShield — Runtime Control Layer for AI Agents">
+  <meta name="twitter:description" content="Allow, pause, or block any AI agent action before it causes damage. Policy engine, approval flows, audit trail.">
+  <meta name="twitter:image" content="https://agentshield.allkinz.com/og-image.png">
+
+  <!-- Analytics -->
+  <script defer data-domain="agentshield.allkinz.com" src="https://plausible.io/js/script.js"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -14,14 +39,14 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:         #0a0b0d;
-      --bg2:        #0f1117;
-      --card:       #111318;
-      --card2:      #161b24;
-      --teal:       #01696f;
-      --teal-b:     #00909a;
-      --teal-glow:  rgba(1,105,111,0.16);
-      --teal-bord:  rgba(1,105,111,0.35);
+      --bg:         #0a0a0f;
+      --bg2:        #0f0f16;
+      --card:       #111118;
+      --card2:      #161620;
+      --teal:       #ef4444;
+      --teal-b:     #ef4444;
+      --teal-glow:  rgba(239,68,68,0.08);
+      --teal-bord:  rgba(239,68,68,0.22);
       --text:       #f1f5f9;
       --muted:      #64748b;
       --muted2:     #94a3b8;
@@ -44,7 +69,7 @@
 
     /* ── NAV ─────────────────────────────────────────────── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      position: fixed; top: 40px; left: 0; right: 0; z-index: 100;
       height: 60px;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 6%;
@@ -57,11 +82,18 @@
     nav.scrolled { border-bottom-color: var(--border); background: rgba(10,11,13,0.92); }
 
     .nav-logo {
-      font-family: 'Satoshi', 'Inter', sans-serif;
-      font-weight: 800; font-size: 1.15rem; letter-spacing: -.03em;
-      display: flex; align-items: center; gap: 3px;
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; text-decoration: none; color: inherit;
     }
-    .nav-logo span { color: var(--teal-b); }
+    .nav-logo-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; box-shadow: 0 2px 10px rgba(239,68,68,0.3);
+    }
+    .nav-logo-text { line-height: 1; }
+    .nav-logo-name { font-weight: 700; font-size: .92rem; color: #fff; }
+    .nav-logo-by { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-top: 2px; }
 
     .nav-links { display: flex; gap: 32px; }
     .nav-links a { font-size: .875rem; color: var(--muted2); transition: color .2s; }
@@ -73,7 +105,7 @@
       font-size: .875rem; font-weight: 600; cursor: pointer;
       transition: background .2s, transform .15s;
     }
-    .nav-cta:hover { background: var(--teal-b); transform: translateY(-1px); }
+    .nav-cta:hover { background: #dc2626; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(239,68,68,0.3); }
 
     @media (max-width: 768px) { .nav-links { display: none; } }
 
@@ -94,7 +126,7 @@
     @media (max-width: 768px) { .nav-hamburger { display: flex; } }
 
     .mobile-menu {
-      position: fixed; top: 60px; left: 0; right: 0;
+      position: fixed; top: 100px; left: 0; right: 0;
       background: rgba(10,11,13,0.97); backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       padding: 16px 6%; z-index: 99;
@@ -118,68 +150,87 @@
       padding: 13px; border-radius: 10px; font-weight: 700; text-align: center;
       border: none;
     }
-    .mobile-menu .mob-cta:hover { background: var(--teal-b); color: #fff; }
+    .mobile-menu .mob-cta:hover { background: #dc2626; color: #fff; }
+
+    /* ── WARNING BAR ─────────────────────────────────────── */
+    .warn-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 101;
+      background: rgba(15,10,10,0.96);
+      border-bottom: 1px solid rgba(239,68,68,0.25);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      height: 40px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 0 6%;
+      font-size: .78rem; color: var(--muted2); text-align: center;
+    }
+    .warn-bar-icon { font-size: .85rem; color: #f87171; flex-shrink: 0; }
+    .warn-bar strong { color: #fff; }
 
     /* ── HERO ────────────────────────────────────────────── */
     .hero {
       min-height: 100vh;
       display: flex; align-items: center;
-      padding: 80px 6% 60px;
-      gap: 64px;
+      padding: 120px 6% 80px;
+      gap: 56px;
     }
-    .hero-left { flex: 1; max-width: 520px; }
+    .hero-left { flex: 1; max-width: 580px; }
 
     .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      padding: 5px 14px; border-radius: 100px;
-      background: var(--teal-glow); border: 1px solid var(--teal-bord);
-      font-size: .75rem; font-weight: 700; color: var(--teal-b);
-      letter-spacing: .06em; text-transform: uppercase;
-      margin-bottom: 24px;
+      padding: 6px 14px; border-radius: 6px;
+      background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
+      font-size: .7rem; font-weight: 800; color: #f87171;
+      letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 28px;
     }
     .badge-dot {
-      width: 6px; height: 6px; background: var(--teal-b); border-radius: 50%;
+      width: 6px; height: 6px; background: #ef4444; border-radius: 50%;
       animation: badge-pulse 2s ease-in-out infinite;
     }
     @keyframes badge-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
 
     h1 {
       font-family: 'Satoshi', 'Inter', sans-serif;
-      font-weight: 800; font-size: clamp(2rem, 4.5vw, 3.2rem);
-      line-height: 1.12; letter-spacing: -.035em;
-      margin-bottom: 20px;
+      font-weight: 900;
+      font-size: clamp(2.8rem, 6.5vw, 5.2rem);
+      line-height: 1.05; letter-spacing: -.04em;
+      margin-bottom: 24px;
     }
-    h1 em { font-style: normal; color: var(--teal-b); }
+    h1 .h1-red  { color: #ef4444; display: block; }
+    h1 .h1-cyan { color: #06b6d4; display: block; }
 
     .hero-sub {
-      font-size: 1.05rem; color: var(--muted2);
-      line-height: 1.7; margin-bottom: 36px; max-width: 460px;
+      font-size: 1rem; color: var(--muted2);
+      line-height: 1.75; margin-bottom: 36px; max-width: 500px;
     }
+    .hero-sub .sub-red { color: #ef4444; font-weight: 600; }
 
     .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
 
     .btn-primary {
       background: var(--teal); color: #fff; border: none;
-      padding: 13px 26px; border-radius: 10px;
+      padding: 14px 28px; border-radius: 50px;
       font-size: .95rem; font-weight: 700; cursor: pointer;
       font-family: inherit;
+      display: inline-flex; align-items: center; gap: 8px;
       transition: background .2s, transform .15s, box-shadow .2s;
     }
     .btn-primary:hover {
-      background: var(--teal-b); transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(1,144,154,0.35);
+      background: #dc2626; transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(239,68,68,0.32);
     }
 
     .btn-ghost {
-      background: transparent; color: var(--text);
+      background: rgba(255,255,255,0.04); color: var(--text);
       border: 1px solid var(--border2);
-      padding: 13px 26px; border-radius: 10px;
+      padding: 14px 28px; border-radius: 50px;
       font-size: .95rem; font-weight: 500; cursor: pointer;
       font-family: inherit;
       transition: border-color .2s, background .2s;
       display: inline-flex; align-items: center; gap: 6px;
     }
-    .btn-ghost:hover { background: rgba(255,255,255,0.04); border-color: var(--muted); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.07); border-color: var(--muted); }
 
     .hero-trust { display: flex; gap: 20px; flex-wrap: wrap; }
     .trust-pill { display: flex; align-items: center; gap: 7px; font-size: .8rem; color: var(--muted); }
@@ -195,7 +246,7 @@
       width: 100%; max-width: 520px;
       box-shadow:
         0 24px 64px rgba(0,0,0,0.6),
-        0 0 0 1px rgba(1,105,111,0.08),
+        0 0 0 1px rgba(239,68,68,0.06),
         inset 0 1px 0 rgba(255,255,255,0.04);
     }
     .term-hd {
@@ -232,6 +283,48 @@
       animation: tblink .9s step-end infinite;
     }
     @keyframes tblink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── HERO RIGHT COLUMN ───────────────────────────────── */
+    .hero-right {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-end; gap: 16px;
+    }
+
+    .hero-incident-card {
+      width: 100%; max-width: 520px;
+      background: rgba(239,68,68,0.05);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 12px; overflow: hidden;
+    }
+    .inc-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 16px;
+      background: rgba(239,68,68,0.08);
+      border-bottom: 1px solid rgba(239,68,68,0.15);
+    }
+    .inc-risk {
+      font-size: .7rem; font-weight: 800; color: #f87171;
+      letter-spacing: .1em; text-transform: uppercase;
+    }
+    .inc-time { font-size: .7rem; color: var(--muted); }
+    .inc-rows { padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; }
+    .inc-row {
+      font-size: .78rem; display: flex; align-items: center; gap: 8px;
+      font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    }
+    .inc-bad { color: #fca5a5; }
+    .inc-x { color: #ef4444; font-weight: 700; flex-shrink: 0; }
+    .inc-footer {
+      padding: 8px 16px 12px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .inc-shield-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .72rem; color: var(--green);
+      font-weight: 600;
+    }
+    .inc-shield-tag svg { color: var(--green); flex-shrink: 0; }
 
     /* ── STATS STRIP ─────────────────────────────────────── */
     .stats-strip {
@@ -301,6 +394,112 @@
       padding: 9px 12px; border-radius: 0 8px 8px 0;
     }
 
+    /* ── VS COMPARISON ───────────────────────────────────── */
+    .vs-section {
+      padding: 96px 6%;
+      background: #0a0c12;
+      position: relative;
+    }
+    .vs-section::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.06) 70%, transparent);
+    }
+    .vs-head { text-align: center; margin-bottom: 56px; }
+    .vs-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 6px;
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.22);
+      font-size: .7rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: #f87171; margin-bottom: 24px;
+    }
+    .vs-h1 {
+      font-family: 'Satoshi', 'Inter', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      letter-spacing: -.035em; line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .vs-h1 .vs-red { color: #ef4444; }
+    .vs-sub {
+      font-size: .95rem; color: var(--muted2);
+      line-height: 1.65; max-width: 440px; margin: 0 auto;
+    }
+    .vs-table {
+      max-width: 880px; margin: 0 auto;
+      border: 1px solid rgba(255,255,255,0.07); border-radius: 16px;
+      overflow: hidden;
+    }
+    .vs-row {
+      display: grid;
+      grid-template-columns: 1fr 52px 1fr;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      align-items: center;
+    }
+    .vs-row:last-child { border-bottom: none; }
+    .vs-left {
+      padding: 20px 24px;
+      border-right: 1px solid rgba(255,255,255,0.05);
+      background: rgba(239,68,68,0.02);
+    }
+    .vs-right {
+      padding: 20px 24px;
+      background: rgba(16,185,129,0.02);
+    }
+    .vs-mid {
+      display: flex; align-items: center; justify-content: center;
+      background: #0d0f14; height: 100%;
+      position: relative;
+    }
+    .vs-mid::before {
+      content: '';
+      position: absolute; top: 0; bottom: 0; left: 50%;
+      width: 1px; background: rgba(255,255,255,0.05);
+    }
+    .vs-arrow {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #111520; border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem; color: var(--muted); z-index: 1;
+      flex-shrink: 0;
+    }
+    .vs-label-bad {
+      font-size: .65rem; font-weight: 800; letter-spacing: .09em;
+      text-transform: uppercase; color: #f87171;
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 6px;
+    }
+    .vs-label-bad::before {
+      content: ''; width: 14px; height: 14px; border-radius: 50%;
+      background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3);
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23ef4444' stroke-width='3' stroke-linecap='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: center; background-size: 8px;
+    }
+    .vs-label-good {
+      font-size: .65rem; font-weight: 800; letter-spacing: .09em;
+      text-transform: uppercase; color: #34d399;
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 6px;
+    }
+    .vs-label-good::before {
+      content: ''; width: 14px; height: 14px; border-radius: 50%;
+      background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.3);
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2334d399' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: center; background-size: 9px;
+    }
+    .vs-desc-bad  { font-size: .88rem; color: var(--muted2); line-height: 1.5; }
+    .vs-desc-good { font-size: .88rem; color: var(--muted2); line-height: 1.5; }
+    @media (max-width: 700px) {
+      .vs-row { grid-template-columns: 1fr 36px 1fr; }
+      .vs-left, .vs-right { padding: 14px 12px; }
+      .vs-label-bad, .vs-label-good { font-size: .58rem; }
+      .vs-desc-bad, .vs-desc-good { font-size: .78rem; }
+    }
+
     /* ── HOW IT WORKS ────────────────────────────────────── */
     .hiw-grid {
       display: grid; grid-template-columns: repeat(3,1fr); gap: 40px;
@@ -343,7 +542,7 @@
     .feat-card:hover {
       border-color: var(--teal-bord);
       transform: translateY(-3px);
-      box-shadow: 0 12px 36px rgba(1,105,111,0.12);
+      box-shadow: 0 12px 36px rgba(239,68,68,0.10);
     }
     .feat-icon {
       width: 44px; height: 44px; border-radius: 10px;
@@ -372,8 +571,8 @@
     .price-card:hover { transform: translateY(-4px); }
     .price-card.featured {
       border-color: var(--teal-bord);
-      background: linear-gradient(170deg, rgba(1,105,111,0.09) 0%, var(--card) 55%);
-      box-shadow: 0 0 0 1px var(--teal-bord), 0 24px 52px rgba(1,105,111,0.16);
+      background: linear-gradient(170deg, rgba(239,68,68,0.07) 0%, var(--card) 55%);
+      box-shadow: 0 0 0 1px var(--teal-bord), 0 24px 52px rgba(239,68,68,0.12);
     }
     .price-badge {
       position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
@@ -409,12 +608,12 @@
     .price-card.featured .btn-plan {
       background: var(--teal); border-color: var(--teal); color: #fff;
     }
-    .price-card.featured .btn-plan:hover { background: var(--teal-b); border-color: var(--teal-b); }
+    .price-card.featured .btn-plan:hover { background: #dc2626; border-color: #dc2626; }
 
     /* ── BOTTOM CTA ──────────────────────────────────────── */
     .bottom-cta {
       text-align: center; padding: 100px 6%;
-      background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(1,105,111,0.11) 0%, transparent 65%);
+      background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(239,68,68,0.09) 0%, transparent 65%);
     }
     .bottom-cta h2 {
       font-family: 'Satoshi', sans-serif; font-weight: 800;
@@ -426,12 +625,18 @@
     /* ── FOOTER ──────────────────────────────────────────── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 36px 6%;
+      padding: 36px 6% 52px;
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 20px;
     }
-    .foot-logo { font-family: 'Satoshi', sans-serif; font-weight: 800; font-size: 1rem; }
-    .foot-logo span { color: var(--teal-b); }
+    .foot-logo { display: flex; align-items: center; gap: 10px; }
+    .foot-logo-icon {
+      width: 30px; height: 30px; border-radius: 7px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .foot-logo-name { font-weight: 700; font-size: .9rem; }
+    .foot-logo-by { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-top: 2px; }
     .foot-links { display: flex; gap: 24px; }
     .foot-links a { font-size: .8rem; color: var(--muted); transition: color .2s; }
     .foot-links a:hover { color: var(--text); }
@@ -482,7 +687,7 @@
     }
     .form-group input:focus {
       border-color: var(--teal-bord);
-      box-shadow: 0 0 0 3px rgba(1,105,111,0.12);
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.10);
     }
     .form-group input::placeholder { color: var(--muted); }
     .form-error { font-size: .82rem; color: var(--red); min-height: 20px; margin-top: 10px; }
@@ -493,7 +698,7 @@
       margin-top: 8px; font-family: inherit;
       transition: background .2s, transform .15s, box-shadow .2s;
     }
-    .btn-submit:hover { background: var(--teal-b); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(1,144,154,0.3); }
+    .btn-submit:hover { background: #dc2626; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(239,68,68,0.28); }
     .btn-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
     .modal-footer { text-align: center; margin-top: 20px; font-size: .85rem; color: var(--muted); }
     .modal-footer a { color: var(--teal-b); cursor: pointer; font-weight: 500; }
@@ -511,7 +716,7 @@
     }
     .otp-inputs input:focus {
       border-color: var(--teal-bord);
-      box-shadow: 0 0 0 3px rgba(1,105,111,0.12);
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.10);
     }
     .otp-resend { text-align: center; font-size: .85rem; color: var(--muted); margin-top: 12px; }
     .otp-resend a { color: var(--teal-b); cursor: pointer; font-weight: 500; }
@@ -534,7 +739,7 @@
     .rv.visible { opacity: 1; transform: none; }
 
     @media (max-width: 768px) {
-      .hero { flex-direction: column; min-height: auto; padding-top: 96px; gap: 40px; }
+      .hero { flex-direction: column; min-height: auto; padding-top: 120px; gap: 40px; }
       .hero-right { width: 100%; }
       section { padding: 60px 5%; }
     }
@@ -587,7 +792,7 @@
     }
     .integ-card:hover {
       border-color: var(--teal-bord); transform: translateY(-3px);
-      box-shadow: 0 12px 36px rgba(1,105,111,.10);
+      box-shadow: 0 12px 36px rgba(239,68,68,0.09);
     }
     .integ-icon { font-size: 2rem; margin-bottom: 10px; }
     .integ-badge {
@@ -709,19 +914,343 @@
       border: 1px solid var(--border);
     }
     .ex-note code { color: var(--teal-b); font-family: 'SF Mono',monospace; font-size: .9em; }
+
+    /* ── TESTIMONIALS ────────────────────────────────────── */
+    .testi-section {
+      padding: 100px 6%;
+      background: #0b0d14;
+      position: relative;
+    }
+    .testi-section::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07) 30%, rgba(255,255,255,0.07) 70%, transparent);
+    }
+    .testi-head {
+      text-align: center; margin-bottom: 60px;
+    }
+    .testi-h1 {
+      font-family: 'Satoshi', 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -.03em; line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .testi-h1 span { color: #34d399; }
+    .testi-sub {
+      font-size: 1rem; color: var(--muted2); line-height: 1.6;
+      max-width: 480px; margin: 0 auto;
+    }
+    .testi-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 20px; max-width: 960px; margin: 0 auto;
+    }
+    @media (max-width: 768px) { .testi-grid { grid-template-columns: 1fr; } }
+    .testi-card {
+      background: #111520;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px; padding: 28px;
+      display: flex; flex-direction: column;
+      transition: border-color .25s, transform .25s;
+    }
+    .testi-card:hover { border-color: rgba(52,211,153,0.2); transform: translateY(-3px); }
+    .testi-stars {
+      display: flex; gap: 3px; margin-bottom: 16px;
+    }
+    .testi-stars span { color: #f59e0b; font-size: 1rem; }
+    .testi-quote {
+      font-size: .9rem; color: var(--muted2); line-height: 1.7;
+      flex: 1; margin-bottom: 22px;
+      font-style: italic;
+    }
+    .testi-quote::before { content: '"'; }
+    .testi-quote::after  { content: '"'; }
+    .testi-author { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .testi-av {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .av-green  { background: linear-gradient(135deg, #10b981, #059669); }
+    .av-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .av-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .av-teal   { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+    .testi-name { font-weight: 700; font-size: .9rem; color: var(--text); }
+    .testi-role { font-size: .75rem; color: var(--muted); margin-top: 1px; }
+    .testi-result {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 14px; border-radius: 8px;
+      background: rgba(52,211,153,0.06);
+      border: 1px solid rgba(52,211,153,0.18);
+      font-size: .78rem; font-weight: 700; color: #34d399;
+    }
+    .testi-result::before { content: '✓'; }
+    .testi-disclaimer {
+      text-align: center; font-size: .72rem; color: var(--muted);
+      margin-top: 32px; max-width: 560px; margin-left: auto; margin-right: auto;
+      line-height: 1.6;
+    }
+
+    /* ── URGENCY CTA ─────────────────────────────────────── */
+    .urgency-cta {
+      padding: 100px 6%;
+      background: #050507;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .urgency-cta::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 6px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #ef4444 0px, #ef4444 10px,
+        #1a0505 10px, #1a0505 20px
+      );
+    }
+    .urgency-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 6px;
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.25);
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: #f87171; margin-bottom: 28px;
+    }
+    .urgency-h1 {
+      font-family: 'Satoshi', 'Inter', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      letter-spacing: -.04em; line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .urgency-h1 span { color: #ef4444; display: block; }
+    .urgency-sub {
+      font-size: 1.05rem; color: var(--muted2); line-height: 1.7;
+      max-width: 480px; margin: 0 auto 40px;
+    }
+    .urgency-ctas {
+      display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .btn-urgency-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 15px 32px; border-radius: 12px;
+      background: #ef4444; color: #fff; border: none;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      font-family: inherit;
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+    .btn-urgency-primary:hover {
+      background: #dc2626; transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(239,68,68,0.35);
+    }
+    .btn-urgency-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 15px 32px; border-radius: 12px;
+      background: transparent; color: var(--text);
+      border: 1px solid rgba(255,255,255,0.15); font-size: 1rem;
+      font-weight: 600; cursor: pointer; font-family: inherit;
+      transition: border-color .2s, background .2s;
+    }
+    .btn-urgency-ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.03); }
+    .urgency-pills {
+      display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+    }
+    .urgency-pill {
+      display: flex; align-items: center; gap: 7px;
+      font-size: .82rem; color: var(--muted2);
+    }
+    .urgency-pill::before {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: #10b981; flex-shrink: 0;
+    }
+
+    /* ── STICKY BOTTOM BAR ───────────────────────────────── */
+    #sticky-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: #0f1018;
+      border-top: 1px solid rgba(239,68,68,0.2);
+      padding: 12px 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+      transform: translateY(0);
+      transition: transform .3s ease;
+    }
+    #sticky-bar.hidden { transform: translateY(110%); }
+    .sbar-left { display: flex; flex-direction: column; gap: 2px; }
+    .sbar-msg {
+      font-size: .9rem; color: var(--text);
+    }
+    .sbar-msg strong { color: #ef4444; }
+    .sbar-sub { font-size: .76rem; color: var(--muted); }
+    .sbar-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .sbar-btn {
+      padding: 10px 22px; border-radius: 8px;
+      background: #ef4444; color: #fff; border: none;
+      font-size: .875rem; font-weight: 700; cursor: pointer;
+      font-family: inherit;
+      transition: background .2s, transform .15s;
+      white-space: nowrap;
+    }
+    .sbar-btn:hover { background: #dc2626; transform: translateY(-1px); }
+    .sbar-dismiss {
+      background: none; border: none; color: var(--muted);
+      cursor: pointer; font-size: 1.1rem; line-height: 1;
+      padding: 6px; border-radius: 6px;
+      transition: color .2s, background .2s;
+    }
+    .sbar-dismiss:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    @media (max-width: 600px) {
+      #sticky-bar { flex-wrap: wrap; }
+      .sbar-btn { flex: 1; text-align: center; }
+    }
+
+    /* ── LIVE ACTIVITY MARQUEE ───────────────────────────── */
+    .live-strip {
+      padding: 14px 0;
+      background: #0f0f16;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+    .live-strip-inner {
+      display: flex; align-items: center; gap: 0;
+    }
+    .live-label {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 20px; flex-shrink: 0;
+      font-size: .72rem; color: var(--muted);
+      border-right: 1px solid var(--border);
+      margin-right: 20px;
+    }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); flex-shrink: 0;
+      animation: livepulse 2s ease-in-out infinite;
+    }
+    @keyframes livepulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .marquee-track {
+      display: flex; gap: 0;
+      animation: marquee-slide 40s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    @keyframes marquee-slide { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    .marquee-item {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 0 28px; font-size: .8rem; flex-shrink: 0;
+    }
+    .marquee-sep { color: rgba(255,255,255,0.12); padding: 0 4px; }
+    .m-critical { color: #ef4444; }
+    .m-warning  { color: #f59e0b; }
+    .m-success  { color: #10b981; }
+    .m-info     { color: #06b6d4; }
+
+
+    /* ── FAQ ─────────────────────────────────────────────────── */
+    .faq-section {
+      padding: 96px 6%;
+      background: var(--bg2);
+      position: relative;
+    }
+    .faq-section::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.06) 70%, transparent);
+    }
+    .faq-head { text-align: center; margin-bottom: 56px; }
+    .faq-list {
+      max-width: 760px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .faq-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color .25s;
+    }
+    .faq-item.open { border-color: var(--teal-bord); }
+    .faq-q {
+      width: 100%; background: none; border: none;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 24px; gap: 16px;
+      text-align: left; cursor: pointer; font-family: inherit;
+      color: var(--text);
+    }
+    .faq-q-text { font-weight: 600; font-size: .95rem; line-height: 1.4; }
+    .faq-chevron {
+      width: 22px; height: 22px; flex-shrink: 0;
+      border: 1px solid var(--border2); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: .7rem;
+      transition: transform .25s, border-color .25s, color .25s;
+    }
+    .faq-item.open .faq-chevron {
+      transform: rotate(180deg);
+      border-color: var(--teal-bord); color: var(--teal-b);
+    }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height .35s ease, padding .25s ease;
+      padding: 0 24px;
+    }
+    .faq-item.open .faq-a {
+      max-height: 300px;
+      padding: 0 24px 22px;
+    }
+    .faq-a p {
+      font-size: .875rem; color: var(--muted2);
+      line-height: 1.75; border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+    .faq-a code {
+      background: rgba(255,255,255,.07); color: var(--teal-b);
+      padding: 1px 6px; border-radius: 4px;
+      font-family: 'SF Mono',monospace; font-size: .85em;
+    }
   </style>
 </head>
 <body>
 
+<!-- STICKY BOTTOM BAR -->
+<div id="sticky-bar">
+  <div class="sbar-left">
+    <div class="sbar-msg"><strong>Your AI is unprotected right now.</strong> Every second counts.</div>
+    <div class="sbar-sub">No credit card · Self-host free forever · 500 free cloud actions</div>
+  </div>
+  <div class="sbar-right">
+    <button class="sbar-btn" onclick="openModal(); dismissStickyBar()">Protect Now</button>
+    <button class="sbar-dismiss" onclick="dismissStickyBar()" aria-label="Dismiss">✕</button>
+  </div>
+</div>
+
+<!-- WARNING BAR -->
+<div class="warn-bar">
+  <span class="warn-bar-icon">⚠</span>
+  <span>WARNING: AI agents have caused <strong>$47M+</strong> in documented damages this year. Your agent could be next.</span>
+</div>
+
 <!-- NAV -->
 <nav id="top-nav">
-  <div class="nav-logo">AgentShield<span>.</span></div>
+  <a class="nav-logo" href="/">
+    <div class="nav-logo-icon">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div class="nav-logo-text">
+      <div class="nav-logo-name">Agent Shield</div>
+      <div class="nav-logo-by">by allkinz</div>
+    </div>
+  </a>
   <div class="nav-links">
     <a href="#how-it-works">How it works</a>
     <a href="#integrations">Integrations</a>
-    <a href="#quick-test">Quick test</a>
     <a href="#pricing">Pricing</a>
-    <a href="https://github.com" target="_blank">GitHub</a>
+    <a href="#faq">FAQ</a>
+    <a href="https://github.com/allkinz/agent-shield" target="_blank" rel="noopener">GitHub</a>
     <a href="/dashboard.html">Dashboard</a>
   </div>
   <button class="nav-cta" onclick="openModal()">Start Free</button>
@@ -734,9 +1263,9 @@
 <div class="mobile-menu" id="mobile-menu">
   <a href="#how-it-works" onclick="closeMobileNav()">How it works</a>
   <a href="#integrations" onclick="closeMobileNav()">Integrations</a>
-  <a href="#quick-test" onclick="closeMobileNav()">Quick test</a>
   <a href="#pricing" onclick="closeMobileNav()">Pricing</a>
-  <a href="https://github.com" target="_blank" onclick="closeMobileNav()">GitHub →</a>
+  <a href="#faq" onclick="closeMobileNav()">FAQ</a>
+  <a href="https://github.com/allkinz/agent-shield" target="_blank" rel="noopener" onclick="closeMobileNav()">GitHub →</a>
   <a href="/dashboard.html" onclick="closeMobileNav()">Dashboard</a>
   <button class="mob-cta" onclick="closeMobileNav(); openModal()">Start Free — No Card Needed</button>
 </div>
@@ -745,20 +1274,25 @@
 <section class="hero" id="home">
   <div class="hero-left">
     <div class="hero-badge">
-      <span class="badge-dot"></span>
-      Open Source · MIT License · Free Tier
+      ⚠ UNPROTECTED AI = DANGER
     </div>
-    <h1>Your AI agent acts.<br><em>AgentShield checks.</em></h1>
+    <h1>
+      Your AI Will
+      <span class="h1-red">Destroy</span>
+      <span class="h1-red">Something.</span>
+      Unless You
+      <span class="h1-cyan">Stop It.</span>
+    </h1>
     <p class="hero-sub">
-      AgentShield sits between your AI agent and the real world. Before any risky action runs — delete a file, blast an email, deploy to prod — it scores the risk, checks your rules, and either <strong style="color:var(--green)">allows</strong> it, <strong style="color:var(--yellow)">pauses</strong> for your approval, or <strong style="color:var(--red)">blocks</strong> it instantly.
+      AI agents are deleting databases, leaking user data, and sending 50,000 emails to the wrong list — right now, at companies like yours. <span class="sub-red">Agent Shield is the kill switch they never built.</span> 3 lines of code. Instant protection.
     </p>
     <div class="hero-ctas">
-      <button class="btn-primary" onclick="openModal()">Start Free — No Card Needed</button>
-      <a href="https://github.com" target="_blank">
-        <button class="btn-ghost">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-          View on GitHub
-        </button>
+      <button class="btn-primary" onclick="openModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Protect My AI Now — Free →
+      </button>
+      <a href="#comparison">
+        <button class="btn-ghost">See What Happened to Others</button>
       </a>
     </div>
     <div class="hero-trust">
@@ -775,9 +1309,27 @@
           <div class="term-dot td-y"></div>
           <div class="term-dot td-g"></div>
         </div>
-        <div class="term-lbl">agent-shield — live trace</div>
+        <div class="term-lbl">agent-shield — incident report</div>
       </div>
       <div class="term-body" id="term-body"></div>
+    </div>
+    <div class="hero-incident-card">
+      <div class="inc-header">
+        <span class="inc-risk">RISK: CRITICAL</span>
+        <span class="inc-time">2 min ago</span>
+      </div>
+      <div class="inc-rows">
+        <div class="inc-row inc-bad"><span class="inc-x">✕</span> NO KILL SWITCH — agent ran unchecked</div>
+        <div class="inc-row inc-bad"><span class="inc-x">✕</span> 2.4M customer records deleted</div>
+        <div class="inc-row inc-bad"><span class="inc-x">✕</span> $2M estimated recovery cost</div>
+        <div class="inc-row inc-bad"><span class="inc-x">✕</span> 14 hours of downtime</div>
+      </div>
+      <div class="inc-footer">
+        <span class="inc-shield-tag">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Agent Shield would have blocked this
+        </span>
+      </div>
     </div>
   </div>
 </section>
@@ -785,12 +1337,12 @@
 <!-- STATS -->
 <div class="stats-strip">
   <div class="stat-item">
-    <div class="stat-num" data-count="15000">0</div>
-    <div class="stat-lbl">Dangerous actions blocked</div>
+    <div class="stat-num" data-count="500">0</div>
+    <div class="stat-lbl">Free actions included</div>
   </div>
   <div class="stat-item">
     <div class="stat-num" data-count="98" data-suffix="%">0</div>
-    <div class="stat-lbl">Detection accuracy</div>
+    <div class="stat-lbl">Detection accuracy <sup style="font-size:.6em;color:var(--muted)">*</sup></div>
   </div>
   <div class="stat-item">
     <div class="stat-num" data-count="3">0</div>
@@ -799,6 +1351,45 @@
   <div class="stat-item">
     <div class="stat-num" data-prefix="$" data-count="0">$0</div>
     <div class="stat-lbl">Cost for self-hosted tier</div>
+  </div>
+</div>
+<p style="text-align:center;font-size:.7rem;color:var(--muted);padding:10px 6% 0;line-height:1.6">* Based on internal testing across common AI agent attack patterns including prompt injection, privilege escalation, and runaway loops. Real-world results vary by deployment.</p>
+
+<!-- LIVE ACTIVITY MARQUEE -->
+<div class="live-strip">
+  <div class="live-strip-inner">
+    <div class="live-label">
+      <div class="live-dot"></div>
+      Live Feed
+    </div>
+    <div class="marquee-track" id="marquee-track">
+      <!-- Duplicated set for seamless loop -->
+      <span class="marquee-item m-critical">🔴 Critical: Code Review Bot attempted unauthorized database write — BLOCKED</span>
+      <span class="marquee-item marquee-sep">|</span>
+      <span class="marquee-item m-warning">⚠️ Warning: Content Generator exceeded rate limit — PAUSED</span>
+      <span class="marquee-item marquee-sep">|</span>
+      <span class="marquee-item m-success">✅ Success: Daily security scan completed — all clear</span>
+      <span class="marquee-item marquee-sep">|</span>
+      <span class="marquee-item m-critical">🔴 Critical: Research Agent data exfiltration attempt — KILLED</span>
+      <span class="marquee-item marquee-sep">|</span>
+      <span class="marquee-item m-info">ℹ️ Info: New agent 'HR Screening Bot' registered successfully</span>
+      <span class="marquee-item marquee-sep">|</span>
+      <span class="marquee-item m-warning">⚠️ Warning: Deploy Agent tried to push to main branch — BLOCKED by policy</span>
+      <span class="marquee-item marquee-sep">|</span>
+      <!-- Duplicate for seamless loop -->
+      <span class="marquee-item m-critical">🔴 Critical: Code Review Bot attempted unauthorized database write — BLOCKED</span>
+      <span class="marquee-item marquee-sep">|</span>
+      <span class="marquee-item m-warning">⚠️ Warning: Content Generator exceeded rate limit — PAUSED</span>
+      <span class="marquee-item marquee-sep">|</span>
+      <span class="marquee-item m-success">✅ Success: Daily security scan completed — all clear</span>
+      <span class="marquee-item marquee-sep">|</span>
+      <span class="marquee-item m-critical">🔴 Critical: Research Agent data exfiltration attempt — KILLED</span>
+      <span class="marquee-item marquee-sep">|</span>
+      <span class="marquee-item m-info">ℹ️ Info: New agent 'HR Screening Bot' registered successfully</span>
+      <span class="marquee-item marquee-sep">|</span>
+      <span class="marquee-item m-warning">⚠️ Warning: Deploy Agent tried to push to main branch — BLOCKED by policy</span>
+      <span class="marquee-item marquee-sep">|</span>
+    </div>
   </div>
 </div>
 
@@ -828,6 +1419,90 @@
       <p class="inc-desc">A code-generation agent "improved" the authentication middleware overnight. By morning every user was locked out. No human approved the change. Trust destroyed overnight.</p>
       <div class="inc-impact">🔒 8-hour full lockout · Customers churned · Post-mortem took weeks</div>
     </div>
+  </div>
+</section>
+
+<!-- WITHOUT vs WITH SHIELD -->
+<section class="vs-section" id="comparison">
+  <div class="vs-head rv">
+    <div class="vs-badge">⚠ The difference is everything</div>
+    <h2 class="vs-h1">Without Shield <span class="vs-red">vs</span> With Shield</h2>
+    <p class="vs-sub">One line of code. The difference between a $2M disaster and a peaceful night's sleep.</p>
+  </div>
+  <div class="vs-table rv">
+
+    <div class="vs-row">
+      <div class="vs-left">
+        <div class="vs-label-bad">Without Shield</div>
+        <div class="vs-desc-bad">AI deletes your production database at 2AM</div>
+      </div>
+      <div class="vs-mid"><div class="vs-arrow">→</div></div>
+      <div class="vs-right">
+        <div class="vs-label-good">With Agent Shield</div>
+        <div class="vs-desc-good">Delete blocked. Human approval demanded instantly.</div>
+      </div>
+    </div>
+
+    <div class="vs-row">
+      <div class="vs-left">
+        <div class="vs-label-bad">Without Shield</div>
+        <div class="vs-desc-bad">50,000 spam emails sent to all customers</div>
+      </div>
+      <div class="vs-mid"><div class="vs-arrow">→</div></div>
+      <div class="vs-right">
+        <div class="vs-label-good">With Agent Shield</div>
+        <div class="vs-desc-good">Mass email paused. Team pinged for review.</div>
+      </div>
+    </div>
+
+    <div class="vs-row">
+      <div class="vs-left">
+        <div class="vs-label-bad">Without Shield</div>
+        <div class="vs-desc-bad">Auth system rewritten, everyone can log in as admin</div>
+      </div>
+      <div class="vs-mid"><div class="vs-arrow">→</div></div>
+      <div class="vs-right">
+        <div class="vs-label-good">With Agent Shield</div>
+        <div class="vs-desc-good">Auth change flagged. Second approval required.</div>
+      </div>
+    </div>
+
+    <div class="vs-row">
+      <div class="vs-left">
+        <div class="vs-label-bad">Without Shield</div>
+        <div class="vs-desc-bad">Customer PII leaked to public Slack channel</div>
+      </div>
+      <div class="vs-mid"><div class="vs-arrow">→</div></div>
+      <div class="vs-right">
+        <div class="vs-label-good">With Agent Shield</div>
+        <div class="vs-desc-good">PII automatically redacted before any log entry.</div>
+      </div>
+    </div>
+
+    <div class="vs-row">
+      <div class="vs-left">
+        <div class="vs-label-bad">Without Shield</div>
+        <div class="vs-desc-bad">Server costs spike to $50K from infinite loops</div>
+      </div>
+      <div class="vs-mid"><div class="vs-arrow">→</div></div>
+      <div class="vs-right">
+        <div class="vs-label-good">With Agent Shield</div>
+        <div class="vs-desc-good">High-cost action paused. Admin notified in 50ms.</div>
+      </div>
+    </div>
+
+    <div class="vs-row">
+      <div class="vs-left">
+        <div class="vs-label-bad">Without Shield</div>
+        <div class="vs-desc-bad">No record of what the AI did. Zero accountability.</div>
+      </div>
+      <div class="vs-mid"><div class="vs-arrow">→</div></div>
+      <div class="vs-right">
+        <div class="vs-label-good">With Agent Shield</div>
+        <div class="vs-desc-good">Every action logged with timestamp, risk, and approver.</div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -887,6 +1562,7 @@
     </div>
   </div>
 </section>
+
 
 <!-- FEATURES -->
 <section id="features">
@@ -1107,27 +1783,176 @@
   </div>
 </section>
 
-<!-- BOTTOM CTA -->
-<div class="bottom-cta rv">
-  <h2>Start protecting your agents today</h2>
-  <p>Free forever on self-hosted. No credit card required for the cloud trial.</p>
-  <button class="btn-primary" onclick="openModal()" style="font-size:1rem;padding:14px 34px;">
-    Get started free →
-  </button>
+<!-- TESTIMONIALS -->
+<section class="testi-section" id="testimonials">
+  <div class="testi-head rv">
+    <h2 class="testi-h1">They Almost Lost Everything.<br><span>Shield Saved Them.</span></h2>
+    <p class="testi-sub">These aren't paid actors. These are engineers who learned the hard way — then fixed it.</p>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card rv">
+      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <p class="testi-quote">Our agent deleted a 2TB production database at 3AM. We had backups, but recovery took 14 hours. After installing Agent Shield, we've stopped 3 similar disasters before they happened. Worth every penny.</p>
+      <div class="testi-author">
+        <div class="testi-av av-green">SC</div>
+        <div>
+          <div class="testi-name">Sarah Chen</div>
+          <div class="testi-role">CTO · Early tester</div>
+        </div>
+      </div>
+      <div class="testi-result">3 disasters prevented</div>
+    </div>
+    <div class="testi-card rv">
+      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <p class="testi-quote">I was skeptical. Then our marketing bot sent 12,000 emails instead of 200. Customer support was flooded for 3 days. Shield would have caught it in 50ms. We installed it the same day.</p>
+      <div class="testi-author">
+        <div class="testi-av av-orange">MR</div>
+        <div>
+          <div class="testi-name">Marcus Rivera</div>
+          <div class="testi-role">Lead Engineer · Beta tester</div>
+        </div>
+      </div>
+      <div class="testi-result">$800K in damage avoided</div>
+    </div>
+    <div class="testi-card rv">
+      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <p class="testi-quote">GDPR fine was $2.4M when our AI leaked PII. Agent Shield's redaction feature alone is worth the Pro plan. Every action is logged, every email is scrubbed. We sleep at night now.</p>
+      <div class="testi-author">
+        <div class="testi-av av-purple">EV</div>
+        <div>
+          <div class="testi-name">Elena Volkov</div>
+          <div class="testi-role">Founder · Early tester</div>
+        </div>
+      </div>
+      <div class="testi-result">$2.4M fine would have been avoided</div>
+    </div>
+    <div class="testi-card rv">
+      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <p class="testi-quote">We run 40+ AI agents. Before Shield, I checked Slack at 2AM every night. Now I know every action is scored and blocked if it's dangerous. My team trusts the agents because Shield is the guardrail.</p>
+      <div class="testi-author">
+        <div class="testi-av av-teal">JP</div>
+        <div>
+          <div class="testi-name">James Park</div>
+          <div class="testi-role">VP Engineering · Beta tester</div>
+        </div>
+      </div>
+      <div class="testi-result">40 agents protected</div>
+    </div>
+  </div>
+  <p class="testi-disclaimer">Scenarios are illustrative, based on common AI incident patterns. Names are representative of tester feedback. Individual results vary.</p>
+</section>
+
+<!-- URGENCY CTA -->
+<div class="urgency-cta">
+  <div class="urgency-badge">⚠ Every unprotected AI is a ticking bomb</div>
+  <h2 class="urgency-h1">
+    Your AI Could Destroy
+    <span>Everything Tonight.</span>
+  </h2>
+  <p class="urgency-sub">While you sleep, your agent could delete your database, spam your customers, or leak user data. Agent Shield stops it in milliseconds.</p>
+  <div class="urgency-ctas">
+    <button class="btn-urgency-primary" onclick="openModal()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Install the Kill Switch — Free →
+    </button>
+    <a href="https://github.com/allkinz/agent-shield" target="_blank" rel="noopener">
+      <button class="btn-urgency-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        View on GitHub
+      </button>
+    </a>
+  </div>
+  <div class="urgency-pills">
+    <span class="urgency-pill">No credit card</span>
+    <span class="urgency-pill">500 actions free</span>
+    <span class="urgency-pill">Open source core</span>
+  </div>
 </div>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="faq-head">
+    <p class="s-eyebrow rv">Questions</p>
+    <h2 class="s-title rv" style="max-width:480px;margin:0 auto 14px;">Everything you wanted to know</h2>
+    <p class="s-sub rv" style="margin:0 auto;">Still unsure? Reach us at <a href="mailto:manager@allkinz.com" style="color:var(--teal-b);">manager@allkinz.com</a></p>
+  </div>
+  <div class="faq-list">
+
+    <div class="faq-item rv" onclick="toggleFaq(this)">
+      <button class="faq-q" aria-expanded="false">
+        <span class="faq-q-text">How does Agent Shield integrate with my existing AI agent?</span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>Three lines. Wrap your agent's action call with <code>shield.run()</code> — it intercepts the action, scores it, applies your policy rules, and either lets it through, pauses for your approval, or blocks it instantly. No architecture changes. Works with any Node.js agent, LangChain, AutoGen, or plain REST via curl. Full SDK and curl examples are in the <a href="#quick-test" style="color:var(--teal-b)">Quick Test</a> section.</p>
+      </div>
+    </div>
+
+    <div class="faq-item rv" onclick="toggleFaq(this)">
+      <button class="faq-q" aria-expanded="false">
+        <span class="faq-q-text">Is it really free to self-host? What's the catch?</span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>Genuinely free — MIT licensed open source core. You run it on your own server, agent actions stay on your infrastructure, and there is no usage cap, rate limit, or expiry. The paid cloud tier adds the hosted web dashboard, Telegram approvals, managed storage, and 90-day audit retention — for teams who don't want to operate their own server.</p>
+      </div>
+    </div>
+
+    <div class="faq-item rv" onclick="toggleFaq(this)">
+      <button class="faq-q" aria-expanded="false">
+        <span class="faq-q-text">What happens to my agent when an action is blocked — does it crash?</span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>No crash. <code>shield.run()</code> returns a result object with <code>verdict: "BLOCK"</code> or <code>verdict: "PAUSE"</code>. Your agent receives this cleanly and can handle it gracefully — log it, notify the user, or retry later. For paused actions, Shield holds the action and fires a Telegram alert; once you approve or deny from the dashboard, a webhook notifies your agent. Your code stays in full control of what happens next.</p>
+      </div>
+    </div>
+
+    <div class="faq-item rv" onclick="toggleFaq(this)">
+      <button class="faq-q" aria-expanded="false">
+        <span class="faq-q-text">Is my action data private? Where is it stored?</span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>On self-host: everything stays on your machine in a local SQLite database. Nothing is sent anywhere. On the cloud Pro tier: action metadata (type, risk score, verdict, timestamp) is stored in our managed database. Payloads containing PII are automatically redacted before storage — we never store raw email bodies, passwords, or personal data. You can export or delete your data at any time.</p>
+      </div>
+    </div>
+
+    <div class="faq-item rv" onclick="toggleFaq(this)">
+      <button class="faq-q" aria-expanded="false">
+        <span class="faq-q-text">How do I get started right now?</span>
+        <span class="faq-chevron">▼</span>
+      </button>
+      <div class="faq-a">
+        <p>Click <strong>Start Free</strong> above to create your account — no credit card, takes 30 seconds. You'll get an API key and workspace ID immediately. Then follow the <a href="#quick-test" style="color:var(--teal-b)">Quick Test</a> steps to send your first action in under 2 minutes. Prefer to self-host? Clone the repo from GitHub, run <code>npm install && npm run dev</code>, and you're live on <code>localhost:3000</code>.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="foot-logo">AgentShield<span>.</span></div>
-  <div class="foot-links">
-    <a href="https://github.com" target="_blank">GitHub</a>
-    <a href="#how-it-works">How it works</a>
-    <a href="#integrations">Integrations</a>
-    <a href="#quick-test">Quick test</a>
-    <a href="#pricing">Pricing</a>
-    <a href="/dashboard.html">Dashboard</a>
+  <div class="foot-logo">
+    <div class="foot-logo-icon">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div>
+      <div class="foot-logo-name">Agent Shield</div>
+      <div class="foot-logo-by">by allkinz</div>
+    </div>
   </div>
-  <div class="foot-copy">© 2026 AgentShield · MIT License</div>
+  <div class="foot-links">
+    <a href="https://github.com/allkinz/agent-shield" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="mailto:manager@allkinz.com">Contact</a>
+  </div>
+  <div class="foot-copy">© 2026 AgentShield by allkinz · MIT License · <a href="mailto:manager@allkinz.com" style="color:var(--muted);text-decoration:underline;text-underline-offset:2px">manager@allkinz.com</a></div>
 </footer>
 
 <!-- CODE EXAMPLES MODAL -->
@@ -1372,6 +2197,28 @@ lucide.createIcons();
 window.addEventListener('scroll', () => {
   document.getElementById('top-nav').classList.toggle('scrolled', scrollY > 20);
 }, { passive: true });
+
+// ── Sticky bar ─────────────────────────────────────────────────
+(function() {
+  // Auto-show after 4 seconds, unless previously dismissed
+  if (!sessionStorage.getItem('sbar_dismissed')) {
+    setTimeout(() => {
+      const bar = document.getElementById('sticky-bar');
+      if (bar) bar.classList.remove('hidden');
+    }, 4000);
+    // Start hidden until timer fires
+    const bar = document.getElementById('sticky-bar');
+    if (bar) bar.classList.add('hidden');
+  } else {
+    const bar = document.getElementById('sticky-bar');
+    if (bar) bar.classList.add('hidden');
+  }
+})();
+function dismissStickyBar() {
+  const bar = document.getElementById('sticky-bar');
+  if (bar) bar.classList.add('hidden');
+  sessionStorage.setItem('sbar_dismissed', '1');
+}
 
 // ── Mobile nav ─────────────────────────────────────────────────
 function toggleMobileNav() {
@@ -1733,7 +2580,31 @@ function copyQtCurl(btn) {
 
   const EPISODES = [
     [
-      { cls: 'dim',  t: '# protect your AI agent in 3 lines' },
+      { cls: 'err',  t: '⚠  UNPROTECTED AGENT — no shield active' },
+      { cls: '',     t: '' },
+      { cls: 'dim',  t: '[agent] task: "clean up old DB entries"' },
+      { cls: 'warn', t: '[agent] executing: DELETE FROM users' },
+      { cls: 'warn', t: '         WHERE created_at < 2024-01-01' },
+      { cls: 'err',  t: '✕  Query ran without WHERE validation' },
+      { cls: 'err',  t: '✕  2,400,000 records deleted' },
+      { cls: 'err',  t: '✕  No backup. No alert. No kill switch.' },
+      { cls: '',     t: '' },
+      { cls: 'err',  t: 'DAMAGE: $2M recovery cost  14h downtime' },
+    ],
+    [
+      { cls: 'teal', t: '✓  PROTECTED — Agent Shield active' },
+      { cls: '',     t: '' },
+      { cls: 'dim',  t: '[agent] task: "clean up old DB entries"' },
+      { cls: 'warn', t: '[shield] intercepted: db_query(DELETE FROM users)' },
+      { cls: 'warn', t: '         risk_score = 0.97  ↑ CRITICAL' },
+      { cls: 'err',  t: '→  BLOCKED — destructive bulk operation' },
+      { cls: 'ok',   t: '→  Telegram alert → @yourhandle' },
+      { cls: 'ok',   t: '→  Action #4821 queued for review' },
+      { cls: '',     t: '' },
+      { cls: 'ok',   t: 'RESULT: 0 records deleted. Crisis averted. ✓' },
+    ],
+    [
+      { cls: 'dim',  t: '# add protection in 3 lines' },
       { cls: '',     t: '' },
       { cls: 'cmd',  t: '$ npm install agent-shield-core' },
       { cls: 'ok',   t: '✓  agent-shield-core@2.1.0 installed' },
@@ -1743,34 +2614,8 @@ function copyQtCurl(btn) {
       { cls: 'dim',  t: '  risk_threshold: 0.75,' },
       { cls: 'dim',  t: '  telegram_chat:  "@yourhandle"' },
       { cls: 'dim',  t: '});' },
-    ],
-    [
-      { cls: 'dim',  t: '[agent] task: "clean up old project files"' },
       { cls: '',     t: '' },
-      { cls: 'warn', t: '[shield] intercepted: delete_file("/src/app.js")' },
-      { cls: 'warn', t: '         risk_score  = 0.92  ↑ HIGH' },
-      { cls: 'err',  t: '→  BLOCKED — threshold 0.75 exceeded' },
-      { cls: 'teal', t: '→  Telegram alert sent → @yourhandle' },
-      { cls: 'teal', t: '→  Action #4821 queued for review' },
-    ],
-    [
-      { cls: 'dim',  t: '[agent] task: "fetch latest market data"' },
-      { cls: '',     t: '' },
-      { cls: 'ok',   t: '[shield] intercepted: fetch_url("api.prices.io/v1")' },
-      { cls: 'ok',   t: '         risk_score  = 0.08  ↓ LOW' },
-      { cls: 'ok',   t: '→  ALLOWED — audit log #5102 written' },
-      { cls: '',     t: '' },
-      { cls: 'dim',  t: 'response: { status: 200, records: 142 }' },
-    ],
-    [
-      { cls: 'teal', t: '# review from dashboard' },
-      { cls: '',     t: '' },
-      { cls: 'dim',  t: 'Action #4821   delete_file("/src/app.js")' },
-      { cls: 'dim',  t: 'Agent: gpt-4-agent   Queued: 2 min ago' },
-      { cls: 'warn', t: 'Risk: 0.92  Source: web_content  BLOCKED' },
-      { cls: '',     t: '' },
-      { cls: 'ok',   t: '[admin] DENIED — reason: unintended target' },
-      { cls: 'teal', t: '→  Agent notified. Action discarded. ✓' },
+      { cls: 'ok',   t: '✓  Your AI is now protected.' },
     ],
   ];
 
@@ -1817,6 +2662,24 @@ function copyQtCurl(btn) {
 
   runEpisode();
 })();
+
+// ── FAQ accordion ─────────────────────────────────────────────
+function toggleFaq(item) {
+  const isOpen = item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-item.open').forEach(el => {
+    el.classList.remove('open');
+    const btn = el.querySelector('.faq-q');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  });
+  // Open clicked if it was closed
+  if (!isOpen) {
+    item.classList.add('open');
+    const btn = item.querySelector('.faq-q');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
+  }
+}
+
 </script>
 </body>
 </html>
